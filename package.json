@@ -1,0 +1,38 @@
+{
+  "name": "smigo",
+  "version": "1.0.0",
+  "description": "A Go board game",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samiluukkonen/smigo.git"
+  },
+  "keywords": [
+    "go"
+  ],
+  "author": "Sami Luukkonen, Pekka Raussi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/samiluukkonen/smigo/issues"
+  },
+  "homepage": "https://github.com/samiluukkonen/smigo#readme",
+  "devDependencies": {
+    "babel-core": "^6.23.1",
+    "babel-loader": "^6.4.0",
+    "babel-preset-es2015": "^6.22.0",
+    "babel-preset-react": "^6.23.0",
+    "webpack": "^1.12.9",
+    "webpack-dev-server": "^1.14.0"
+  },
+  "dependencies": {
+    "babel-preset-stage-1": "^6.22.0",
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2",
+    "react-redux": "^5.0.3",
+    "redux": "^3.6.0"
+  }
+}
