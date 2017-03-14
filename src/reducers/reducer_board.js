@@ -15,9 +15,9 @@ const INITIAL_STATE =  board
 export default function(state = INITIAL_STATE, action) {
   switch(action.type) {
   case  UPDATE_BOARD:
-    let newBoard = state
     const { x, y, player } = action.payload
 
+    let newBoard = [...state]
     newBoard[x][y] = player
 
     return newBoard
