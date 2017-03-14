@@ -8,13 +8,39 @@ class Board extends Component {
 
     this.state = {
       size: props.size,
+      turn: 1,
     }
+
+    this.handleOnClick = this.handleOnClick.bind(this)
+    this.renderRow = this.renderRow.bind(this)
+    this.handleCheckTurn = this.handleCheckTurn.bind(this)
+  }
+
+  handleOnClick() {
+    const turn = this.state.turn ? 0 : 1
+
+    this.setState({ turn })
+
+    return turn
+  }
+
+  handleCheckTurn() {
+    return this.state.turn
   }
 
   renderRow(row, index) {
     return (
       <tr key={index}>
-        {row.map(node => <BoardNode key={node} />)}
+        {row.map(node => {
+          return (
+            <BoardNode
+              key={node}
+              turn={this.state.turn}
+              onChangeTurn={this.handleOnClick}
+              onCheckTurn={this.handleCheckTurn}
+            />
+          )
+        })}
       </tr>
     )
   }
@@ -29,8 +55,12 @@ class Board extends Component {
       }
     }
 
+    const style = {
+      backgroundColor: "#CC9966",
+    }
+
     return (
-      <table className="table-bordered">
+      <table className="table-bordered" style={style}>
         <tbody>
           {board.map(this.renderRow)}
         </tbody>
