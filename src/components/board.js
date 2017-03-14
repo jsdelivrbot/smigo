@@ -1,15 +1,40 @@
 import React, { Component } from 'react'
 
+import BoardNode from './board_node'
+
 class Board extends Component {
-  constructor() {
+  constructor(props) {
+    super(props)
+
     this.state = {
-      size: 9
+      size: props.size,
     }
   }
 
-  render() {
+  renderRow(row, index) {
     return (
-      <div>Board</div>
+      <tr key={index}>
+        {row.map(node => <BoardNode key={node} />)}
+      </tr>
+    )
+  }
+
+  render() {
+    let board = []
+
+    for(let x = 0; x < this.state.size; x++) {
+      board[x] = []
+      for(let y = 0; y < this.state.size; y++) {
+        board[x][y] = `${x}-${y}`
+      }
+    }
+
+    return (
+      <table className="table-bordered">
+        <tbody>
+          {board.map((row, index) => this.renderRow(row, index))}
+        </tbody>
+      </table>
     )
   }
 }
