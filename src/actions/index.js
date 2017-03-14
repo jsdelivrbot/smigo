@@ -1,8 +1,15 @@
 export const UPDATE_TURN = 'UPDATE_TURN'
+export const UPDATE_BOARD = 'UPDATE_BOARD'
 
-export function updateTurn(x, y) {
+export function updateTurn() {
   return {
     type: UPDATE_TURN,
-    payload: { x, y }
+  }
+}
+
+export function updateBoard(x, y, player) {
+  return {
+    type: UPDATE_BOARD,
+    payload: { x, y, player }
   }
 }
