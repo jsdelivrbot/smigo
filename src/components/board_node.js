@@ -28,8 +28,9 @@ class BoardNode extends Component {
       return null
     }
 
+    const { players: { player1, player2 }} = this.props.game
     const { x, y } = this.state
-    const backgroundColor = this.props.onChangeTurn(x, y) ? "#fff" : "#000"
+    const backgroundColor = this.props.onChangeTurn(x, y) ? player2.color  : player1.color
 
     this.setState({
       clicked: true,
