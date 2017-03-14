@@ -9,14 +9,6 @@ class Game extends Component {
 
     this.state = {
       boardSize: 9,
-      players: {
-        "player1": {
-          color: "#000"
-        },
-        "player2": {
-          color: "#fff"
-        }
-      }
     }
   }
 
