@@ -32,7 +32,7 @@ class Board extends Component {
     return (
       <table className="table-bordered">
         <tbody>
-          {board.map((row, index) => this.renderRow(row, index))}
+          {board.map(this.renderRow)}
         </tbody>
       </table>
     )
