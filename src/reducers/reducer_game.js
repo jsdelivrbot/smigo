@@ -1,8 +1,20 @@
 import { UPDATE_TURN } from '../actions/index'
 
+const boardSize = 9
+let board = []
+
+for(let x = 0; x < boardSize; x++) {
+  board[x] = []
+  for(let y = 0; y < boardSize; y++) {
+    board[x][y] = null
+  }
+}
+
+
 const INITIAL_STATE = {
   turn: 0,
   whosTurn: 0,
+  board,
   players: {
     "player1": {
       color: "#000"
@@ -19,7 +31,12 @@ export default function(state = INITIAL_STATE, action) {
     const turn = state.turn + 1
     const whosTurn = state.whosTurn ? 0 : 1
 
-    return { ...state, turn, whosTurn }
+    let newBoard = state.board
+    const { x, y } = action.payload
+
+    newBoard[x][y] = whosTurn
+
+    return { ...state, turn, whosTurn, board: newBoard }
   }
 
   return state

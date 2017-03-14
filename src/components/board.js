@@ -8,17 +8,13 @@ class Board extends Component {
   constructor(props) {
     super(props)
 
-    this.state = {
-      size: props.size,
-    }
-
     this.handleOnClick = this.handleOnClick.bind(this)
     this.renderRow = this.renderRow.bind(this)
     this.handleCheckTurn = this.handleCheckTurn.bind(this)
   }
 
-  handleOnClick() {
-    this.props.updateTurn()
+  handleOnClick(x, y) {
+    this.props.updateTurn(x, y)
 
     return this.props.game.whosTurn
   }
@@ -27,13 +23,15 @@ class Board extends Component {
     return this.props.game.whosTurn
   }
 
-  renderRow(row, index) {
+  renderRow(row, x) {
     return (
-      <tr key={index}>
-        {row.map(node => {
+      <tr key={x}>
+        {row.map((node, y) => {
           return (
             <BoardNode
-              key={node}
+              key={`${x}-${y}`}
+              x={x}
+              y={y}
               onChangeTurn={this.handleOnClick}
               onCheckTurn={this.handleCheckTurn}
             />
@@ -44,23 +42,18 @@ class Board extends Component {
   }
 
   render() {
-    let board = []
-
-    for(let x = 0; x < this.state.size; x++) {
-      board[x] = []
-      for(let y = 0; y < this.state.size; y++) {
-        board[x][y] = `${x}-${y}`
-      }
-    }
-
     const style = {
       backgroundColor: "#CC9966",
+    }
+
+    if (!this.props.game) {
+      return <div>Loading...</div>
     }
 
     return (
       <table className="table-bordered" style={style}>
         <tbody>
-          {board.map(this.renderRow)}
+          {this.props.game.board.map(this.renderRow)}
         </tbody>
       </table>
     )
