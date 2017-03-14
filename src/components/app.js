@@ -4,7 +4,7 @@ import Board from './board'
 
 class App extends Component {
   render() {
-    return <Board />
+    return <Board size={19} />
   }
 }
 
