@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 
+const boardColor = "#CC9966"
+
 class BoardNode extends Component {
   constructor(props) {
     super(props)
@@ -8,7 +10,8 @@ class BoardNode extends Component {
       style: {
         width: "75px",
         height: "75px",
-        backgroundColor: "#fff",
+        backgroundColor: boardColor,
+        opacity: 1,
       }
     }
 
@@ -20,7 +23,7 @@ class BoardNode extends Component {
     const previousStyle = this.state.style
 
     this.setState({
-      style: { ...previousStyle, backgroundColor: "#fff" }
+      style: { ...previousStyle, opacity: 1 }
     })
   }
 
@@ -28,7 +31,7 @@ class BoardNode extends Component {
     const previousStyle = this.state.style
 
     this.setState({
-      style: { ...previousStyle, backgroundColor: "#fafafa" }
+      style: { ...previousStyle, opacity: 0.9 }
     })
   }
 
