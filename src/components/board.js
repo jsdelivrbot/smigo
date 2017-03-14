@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 
+import { updateTurn } from '../actions/index'
 import BoardNode from './board_node'
 
 class Board extends Component {
@@ -8,7 +10,6 @@ class Board extends Component {
 
     this.state = {
       size: props.size,
-      turn: 1,
     }
 
     this.handleOnClick = this.handleOnClick.bind(this)
@@ -17,15 +18,13 @@ class Board extends Component {
   }
 
   handleOnClick() {
-    const turn = this.state.turn ? 0 : 1
+    this.props.updateTurn()
 
-    this.setState({ turn })
-
-    return turn
+    return this.props.game.whosTurn
   }
 
   handleCheckTurn() {
-    return this.state.turn
+    return this.props.game.whosTurn
   }
 
   renderRow(row, index) {
@@ -35,7 +34,6 @@ class Board extends Component {
           return (
             <BoardNode
               key={node}
-              turn={this.state.turn}
               onChangeTurn={this.handleOnClick}
               onCheckTurn={this.handleCheckTurn}
             />
@@ -69,4 +67,8 @@ class Board extends Component {
   }
 }
 
-export default Board
+function mapStateToProps(state) {
+  return { game: state.game }
+}
+
+export default connect(mapStateToProps, { updateTurn })(Board)
