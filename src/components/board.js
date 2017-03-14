@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { updateTurn } from '../actions/index'
+import { updateTurn, updateBoard } from '../actions/index'
 import BoardNode from './board_node'
 
 class Board extends Component {
@@ -14,7 +14,8 @@ class Board extends Component {
   }
 
   handleOnClick(x, y) {
-    this.props.updateTurn(x, y)
+    this.props.updateTurn()
+    this.props.updateBoard(x, y, this.props.game.whosTurn)
 
     return this.props.game.whosTurn
   }
@@ -46,14 +47,14 @@ class Board extends Component {
       backgroundColor: "#CC9966",
     }
 
-    if (!this.props.game) {
+    if (!this.props.board) {
       return <div>Loading...</div>
     }
 
     return (
       <table className="table-bordered" style={style}>
         <tbody>
-          {this.props.game.board.map(this.renderRow)}
+          {this.props.board.map(this.renderRow)}
         </tbody>
       </table>
     )
@@ -61,7 +62,10 @@ class Board extends Component {
 }
 
 function mapStateToProps(state) {
-  return { game: state.game }
+  return {
+    game: state.game,
+    board: state.board,
+  }
 }
 
-export default connect(mapStateToProps, { updateTurn })(Board)
+export default connect(mapStateToProps, { updateTurn, updateBoard })(Board)
