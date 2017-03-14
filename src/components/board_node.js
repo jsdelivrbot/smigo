@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 
 class BoardNode extends Component {
   constructor(props) {
@@ -58,8 +59,9 @@ class BoardNode extends Component {
 
   handleMouseOver() {
     const previousStyle = this.state.style
+    const { whosTurn, players: { player1, player2 }} = this.props.game
 
-    let backgroundColor = !this.props.onCheckTurn() ? "#fff" : "#000"
+    let backgroundColor = whosTurn ? player2.color  : player1.color
 
     if (this.state.clicked) {
       backgroundColor = this.state.style.backgroundColor
@@ -86,4 +88,9 @@ class BoardNode extends Component {
   }
 }
 
-export default BoardNode
+
+function mapStateToProps(state) {
+  return { game: state.game }
+}
+
+export default connect(mapStateToProps)(BoardNode)
