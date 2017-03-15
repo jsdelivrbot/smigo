@@ -6,6 +6,7 @@ import {
   updateTurn,
   updateBoard,
   detectAndMergeGroups,
+  countLiberties,
 } from '../actions/index'
 import BoardNode from './board_node'
 
@@ -25,6 +26,7 @@ class Board extends Component {
 
     this.props.updateBoard(x, y, whosTurn)
     this.props.detectAndMergeGroups(x, y, whosTurn)
+    this.props.countLiberties(whosTurn)
 
     return whosTurn
   }
@@ -78,7 +80,12 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  const actions = { updateTurn, updateBoard, detectAndMergeGroups }
+  const actions = {
+    updateTurn,
+    updateBoard,
+    detectAndMergeGroups,
+    countLiberties
+  }
 
   return bindActionCreators(actions, dispatch)
 }

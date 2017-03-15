@@ -1,6 +1,10 @@
 import _ from 'lodash'
 
-import { UPDATE_BOARD, DETECT_AND_MERGE_GROUPS } from '../actions/index'
+import { 
+  UPDATE_BOARD,
+  DETECT_AND_MERGE_GROUPS,
+  COUNT_LIBERTIES,
+} from '../actions/index'
 
 const vicinity = (x, y) => {
   return {
@@ -74,10 +78,50 @@ const iterateGroups = ({ x, y, player }, groups) => {
   return [groups, indexes]
 }
 
+const calculateLiberties = (x, y, board, liberties) => {
+  const surroundings = [
+    [x, y - 1],
+    [x, y + 1],
+    [x - 1, y],
+    [x + 1, y],
+  ]
+
+  surroundings.map(coordinate => {
+    const [coordX, coordY] = coordinate
+
+    if (board[coordX] === undefined) {
+      return
+    }
+
+    if (board[coordX][coordY] === 0) {
+      liberties = [...liberties, coordinate.join('-')]
+    }
+  })
+
+  return liberties
+}
+
+const getLibertyCoordinates = (group, board) => {
+  const libertyCoordinates = group.reduce((acc, cur) => {
+    let [coordX, coordY] = cur.split("-");
+
+    coordX = Number(coordX)
+    coordY = Number(coordY)
+
+    return calculateLiberties(coordX, coordY, board, acc)
+  }, [])
+
+  return _.uniq(libertyCoordinates)
+}
+
 const generateBoard = size => Array(size).fill().map(() => Array(size).fill(0))
 
 const INITIAL_STATE = {
   board: generateBoard(9),
+  liberties: {
+    1: [],
+    2: [],
+  },
   groups: {
     1: [],
     2: []
@@ -110,6 +154,23 @@ export default function(state = INITIAL_STATE, action) {
       groups: {
         ...state.groups,
         [action.payload.player]: groups
+      }
+    }
+  case COUNT_LIBERTIES:
+    const groupsToCount = { ...state.groups }
+
+    const libertyGroups = groupsToCount[action.payload.player]
+      .map(group => {
+        const libertyCount = getLibertyCoordinates(group, [...state.board]).length
+
+        return [group, libertyCount]
+      })
+
+    return { 
+      ...state,
+      liberties: {
+        ...state.liberties,
+        [action.payload.player]: libertyGroups,
       }
     }
   }
