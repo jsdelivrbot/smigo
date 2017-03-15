@@ -51,10 +51,9 @@ const mergeGroups = (indexes, groups) => {
 }
 
 const generateBoard = size => Array(size).fill().map(() => Array(size).fill(0))
-const board = generateBoard(9)
 
 const INITIAL_STATE = {
-  board,
+  board: generateBoard(9),
   groups: {
     1: [],
     2: []
