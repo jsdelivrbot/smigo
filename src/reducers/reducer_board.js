@@ -1,4 +1,25 @@
-import { UPDATE_BOARD } from '../actions/index'
+import _ from 'lodash'
+
+import { UPDATE_BOARD, DETECT_GROUPS } from '../actions/index'
+
+function vicinities(x, y) {
+  return {
+    up: `${x - 1}-${y}`,
+    down: `${x + 1}-${y}`,
+    left: `${x}-${y - 1}`,
+    right: `${x}-${y + 1}`,
+  }
+}
+
+function checkVicinity(x, y, group) {
+  // coordinates around stone position
+  const vicinity = vicinities(x, y)
+
+  return group.includes(vicinity.up) || 
+          group.includes(vicinity.down) ||
+          group.includes(vicinity.left) || 
+          group.includes(vicinity.right)
+}
 
 const boardSize = 9
 let board = []
@@ -10,17 +31,75 @@ for(let x = 0; x < boardSize; x++) {
   }
 }
 
-const INITIAL_STATE =  board
+const INITIAL_STATE = {
+  board,
+  groups: {
+    0: [],
+    1: []
+  },
+}
 
 export default function(state = INITIAL_STATE, action) {
   switch(action.type) {
-  case  UPDATE_BOARD:
+  case UPDATE_BOARD:
     const { x, y, player } = action.payload
 
-    let newBoard = [...state]
+    let newBoard = [...state.board]
     newBoard[x][y] = player
 
-    return newBoard
+    return { ...state, newBoard }
+  case DETECT_GROUPS:
+    let groups = { ...state.groups }
+
+    const { x: stoneX, y: stoneY, player: currentPlayer } = action.payload
+
+    const position = `${stoneX}-${stoneY}`
+
+    let foundIndex = []
+
+    // loop player's possible groups and
+    // check if current stone position matches any existing groups
+    const nodeGroups = state.groups[currentPlayer].filter((group, index) => {
+      if (checkVicinity(stoneX, stoneY, group)) {
+        foundIndex.push(index)
+
+        groups[currentPlayer][index].push(position)
+
+        return true
+      }
+
+      return false
+    })
+
+    if (!nodeGroups.length) {
+      groups[currentPlayer].push([position])
+    }
+
+    if (foundIndex.length > 1) {
+
+      // gather up arrays which needs to be merged
+      let mergedArray = groups[currentPlayer].reduce((acc, cur, index) => {
+        if (foundIndex.includes(index)) {
+          acc = [...acc, cur]
+        }
+
+        return acc
+      }, [])
+
+      mergedArray = _.flatten(mergedArray) // e.g. ["0-0", "0-1", "0-2", "0-1"]
+      mergedArray = _.uniq(mergedArray) // e.g. ["0-0", "0-1", "0-2"]
+
+      // remove arrays from original set which were merged and flattened
+      // we want only arrays that were not in foundIndex array
+      groups[currentPlayer] = groups[currentPlayer].filter((val, index) => {
+        return !foundIndex.includes(index)
+      })
+
+      // push new merged and flattened array to player's groups
+      groups[currentPlayer].push(mergedArray)
+    }
+
+    return { ...state, groups }
   }
 
   return state
