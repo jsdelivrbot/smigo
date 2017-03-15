@@ -178,7 +178,8 @@ export default function(state = INITIAL_STATE, action) {
     return { 
       ...state,
       liberties: {
-        ...libertyGroups,
+        1: libertyGroups[0],
+        2: libertyGroups[1],
       }
     }
   }
