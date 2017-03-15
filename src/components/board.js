@@ -1,7 +1,12 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 
-import { updateTurn, updateBoard } from '../actions/index'
+import {
+  updateTurn,
+  updateBoard,
+  detectGroups,
+} from '../actions/index'
 import BoardNode from './board_node'
 
 class Board extends Component {
@@ -15,9 +20,13 @@ class Board extends Component {
 
   handleOnClick(x, y) {
     this.props.updateTurn()
-    this.props.updateBoard(x, y, this.props.game.whosTurn)
 
-    return this.props.game.whosTurn
+    const whosTurn = this.props.game.whosTurn
+
+    this.props.updateBoard(x, y, whosTurn)
+    this.props.detectGroups(x, y, whosTurn)
+
+    return whosTurn
   }
 
   handleCheckTurn() {
@@ -54,7 +63,7 @@ class Board extends Component {
     return (
       <table className="table-bordered" style={style}>
         <tbody>
-          {this.props.board.map(this.renderRow)}
+          {this.props.board.board.map(this.renderRow)}
         </tbody>
       </table>
     )
@@ -68,4 +77,10 @@ function mapStateToProps(state) {
   }
 }
 
-export default connect(mapStateToProps, { updateTurn, updateBoard })(Board)
+function mapDispatchToProps(dispatch) {
+  const actions = { updateTurn, updateBoard, detectGroups }
+
+  return bindActionCreators(actions, dispatch)
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Board)
