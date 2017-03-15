@@ -2,7 +2,7 @@ import _ from 'lodash'
 
 import { UPDATE_BOARD, DETECT_AND_MERGE_GROUPS } from '../actions/index'
 
-function vicinities(x, y) {
+const vicinities = (x, y) => {
   return {
     up: `${x - 1}-${y}`,
     down: `${x + 1}-${y}`,
@@ -11,7 +11,7 @@ function vicinities(x, y) {
   }
 }
 
-function checkVicinity(x, y, group) {
+const checkVicinity = (x, y, group) => {
   // coordinates around stone position
   const vicinity = vicinities(x, y)
 
@@ -21,7 +21,7 @@ function checkVicinity(x, y, group) {
           group.includes(vicinity.right)
 }
 
-function mergeGroups(indexes, groups) {
+const mergeGroups = (indexes, groups) => {
   if (indexes.length < 2) {
     return groups
   }
