@@ -50,6 +50,12 @@ const mergeGroups = (indexes, groups) => {
   return groups
 }
 
+const updateBoard = ({ x, y, player }, board) => {
+  board[x][y] = player
+
+  return board
+}
+
 const generateBoard = size => Array(size).fill().map(() => Array(size).fill(0))
 
 const INITIAL_STATE = {
@@ -63,10 +69,7 @@ const INITIAL_STATE = {
 export default function(state = INITIAL_STATE, action) {
   switch(action.type) {
   case UPDATE_BOARD:
-    const { x, y, player } = action.payload
-
-    let newBoard = [...state.board]
-    newBoard[x][y] = player
+    const newBoard = updateBoard(action.payload, [...state.board])
 
     return { ...state, newBoard }
   case DETECT_AND_MERGE_GROUPS:
