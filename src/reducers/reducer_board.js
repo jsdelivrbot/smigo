@@ -1,6 +1,6 @@
 import _ from 'lodash'
 
-import { UPDATE_BOARD, DETECT_GROUPS } from '../actions/index'
+import { UPDATE_BOARD, DETECT_AND_MERGE_GROUPS } from '../actions/index'
 
 function vicinities(x, y) {
   return {
@@ -77,7 +77,7 @@ export default function(state = INITIAL_STATE, action) {
     newBoard[x][y] = player
 
     return { ...state, newBoard }
-  case DETECT_GROUPS:
+  case DETECT_AND_MERGE_GROUPS:
     let groups = { ...state.groups }
 
     const { x: stoneX, y: stoneY, player: currentPlayer } = action.payload

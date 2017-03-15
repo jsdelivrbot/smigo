@@ -1,6 +1,6 @@
 export const UPDATE_TURN = 'UPDATE_TURN'
 export const UPDATE_BOARD = 'UPDATE_BOARD'
-export const DETECT_GROUPS = 'DETECT_GROUPS'
+export const DETECT_AND_MERGE_GROUPS = 'DETECT_AND_MERGE_GROUPS'
 
 export function updateTurn() {
   return {
@@ -15,9 +15,9 @@ export function updateBoard(x, y, player) {
   }
 }
 
-export function detectGroups(x, y, player) {
+export function detectAndMergeGroups(x, y, player) {
   return {
-    type: DETECT_GROUPS,
+    type: DETECT_AND_MERGE_GROUPS,
     payload: { x, y, player }
   }
 }

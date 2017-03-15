@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux'
 import {
   updateTurn,
   updateBoard,
-  detectGroups,
+  detectAndMergeGroups,
 } from '../actions/index'
 import BoardNode from './board_node'
 
@@ -24,7 +24,7 @@ class Board extends Component {
     const whosTurn = this.props.game.whosTurn
 
     this.props.updateBoard(x, y, whosTurn)
-    this.props.detectGroups(x, y, whosTurn)
+    this.props.detectAndMergeGroups(x, y, whosTurn)
 
     return whosTurn
   }
@@ -78,7 +78,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  const actions = { updateTurn, updateBoard, detectGroups }
+  const actions = { updateTurn, updateBoard, detectAndMergeGroups }
 
   return bindActionCreators(actions, dispatch)
 }
