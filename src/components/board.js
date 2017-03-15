@@ -33,10 +33,10 @@ class Board extends Component {
     return this.props.game.whosTurn
   }
 
-  renderRow(row, x) {
+  renderRow(row, y) {
     return (
-      <tr key={x}>
-        {row.map((node, y) => {
+      <tr key={y}>
+        {row.map((node, x) => {
           return (
             <BoardNode
               key={`${x}-${y}`}
