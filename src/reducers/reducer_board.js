@@ -51,20 +51,14 @@ const mergeGroups = (indexes, groups) => {
 }
 
 const boardSize = 9
-let board = []
 
-for(let x = 0; x < boardSize; x++) {
-  board[x] = []
-  for(let y = 0; y < boardSize; y++) {
-    board[x][y] = null
-  }
-}
+let board = Array(9).fill().map(() => Array(9).fill(0))
 
 const INITIAL_STATE = {
   board,
   groups: {
-    0: [],
-    1: []
+    1: [],
+    2: []
   },
 }
 

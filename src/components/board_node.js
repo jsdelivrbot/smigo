@@ -30,7 +30,7 @@ class BoardNode extends Component {
 
     const { players: { player1, player2 }} = this.props.game
     const { x, y } = this.state
-    const backgroundColor = this.props.onChangeTurn(x, y) ? player2.color  : player1.color
+    const backgroundColor = this.props.onChangeTurn(x, y) % 2 ? player1.color  : player2.color
 
     this.setState({
       clicked: true,
@@ -65,7 +65,7 @@ class BoardNode extends Component {
     const previousStyle = this.state.style
     const { whosTurn, players: { player1, player2 }} = this.props.game
 
-    let backgroundColor = whosTurn ? player2.color  : player1.color
+    let backgroundColor = whosTurn % 2 ? player1.color : player2.color
 
     if (this.state.clicked) {
       backgroundColor = this.state.style.backgroundColor

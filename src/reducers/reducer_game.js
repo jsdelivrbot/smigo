@@ -2,7 +2,7 @@ import { UPDATE_TURN } from '../actions/index'
 
 const INITIAL_STATE = {
   turn: 0,
-  whosTurn: 0,
+  whosTurn: 1,
   players: {
     "player1": {
       color: "#000"
@@ -17,7 +17,7 @@ export default function(state = INITIAL_STATE, action) {
   switch(action.type) {
   case UPDATE_TURN:
     const turn = state.turn + 1
-    const whosTurn = state.whosTurn ? 0 : 1
+    const whosTurn = state.whosTurn % 2 === 0 ? 1 : 2
 
     return { ...state, turn, whosTurn }
   }
