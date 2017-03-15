@@ -114,6 +114,14 @@ const getLibertyCoordinates = (group, board) => {
   return _.uniq(libertyCoordinates)
 }
 
+const playerGroupLiberties = (player, board) => {
+  return player.map(group => {
+    const libertyCount = getLibertyCoordinates(group, board).length
+
+    return [group, libertyCount]
+  })
+}
+
 const generateBoard = size => Array(size).fill().map(() => Array(size).fill(0))
 
 const INITIAL_STATE = {
@@ -160,13 +168,7 @@ export default function(state = INITIAL_STATE, action) {
     let groupsToCount = { ...state.groups }
     groupsToCount = [groupsToCount[1], groupsToCount[2]]
 
-    const libertyGroups = groupsToCount.map(player => {
-      return player.map(group => {
-        const libertyCount = getLibertyCoordinates(group, [...state.board]).length
-
-        return [group, libertyCount]
-      })
-    })
+    const libertyGroups = groupsToCount.map(player => playerGroupLiberties(player, [...state.board]))
 
     return { 
       ...state,
