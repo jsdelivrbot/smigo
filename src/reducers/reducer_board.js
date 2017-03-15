@@ -79,12 +79,10 @@ export default function(state = INITIAL_STATE, action) {
     return { ...state, newBoard }
   case DETECT_AND_MERGE_GROUPS:
     let groups = { ...state.groups }
+    let foundIndex = []
 
     const { x: stoneX, y: stoneY, player: currentPlayer } = action.payload
-
     const position = `${stoneX}-${stoneY}`
-
-    let foundIndex = []
 
     groups = groups[currentPlayer]
 
