@@ -21,6 +21,35 @@ function checkVicinity(x, y, group) {
           group.includes(vicinity.right)
 }
 
+function mergeGroups(indexes, groups, player) {
+  if (indexes.length < 2) {
+    return groups
+  }
+
+  // gather up arrays which needs to be merged
+  let mergedArray = groups[player].reduce((acc, cur, index) => {
+    if (indexes.includes(index)) {
+      acc = [...acc, cur]
+    }
+
+    return acc
+  }, [])
+
+  mergedArray = _.flatten(mergedArray) // e.g. ["0-0", "0-1", "0-2", "0-1"]
+  mergedArray = _.uniq(mergedArray) // e.g. ["0-0", "0-1", "0-2"]
+
+  // remove arrays from original set which were merged and flattened
+  // we want only arrays that were not in indexes array
+  groups[player] = groups[player].filter((val, index) => {
+    return !indexes.includes(index)
+  })
+
+  // push new merged and flattened array to player's groups
+  groups[player].push(mergedArray)
+
+  return groups
+}
+
 const boardSize = 9
 let board = []
 
@@ -75,29 +104,7 @@ export default function(state = INITIAL_STATE, action) {
       groups[currentPlayer].push([position])
     }
 
-    if (foundIndex.length > 1) {
-
-      // gather up arrays which needs to be merged
-      let mergedArray = groups[currentPlayer].reduce((acc, cur, index) => {
-        if (foundIndex.includes(index)) {
-          acc = [...acc, cur]
-        }
-
-        return acc
-      }, [])
-
-      mergedArray = _.flatten(mergedArray) // e.g. ["0-0", "0-1", "0-2", "0-1"]
-      mergedArray = _.uniq(mergedArray) // e.g. ["0-0", "0-1", "0-2"]
-
-      // remove arrays from original set which were merged and flattened
-      // we want only arrays that were not in foundIndex array
-      groups[currentPlayer] = groups[currentPlayer].filter((val, index) => {
-        return !foundIndex.includes(index)
-      })
-
-      // push new merged and flattened array to player's groups
-      groups[currentPlayer].push(mergedArray)
-    }
+    groups = mergeGroups(foundIndex, groups, currentPlayer)
 
     return { ...state, groups }
   }
