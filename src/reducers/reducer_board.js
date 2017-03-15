@@ -88,7 +88,7 @@ export default function(state = INITIAL_STATE, action) {
 
     // loop player's possible groups and
     // check if current stone position matches any existing groups
-    const nodeGroups = state.groups[currentPlayer].filter((group, index) => {
+    const nodeGroups = groups[currentPlayer].filter((group, index) => {
       if (checkVicinity(stoneX, stoneY, group)) {
         foundIndex.push(index)
 
