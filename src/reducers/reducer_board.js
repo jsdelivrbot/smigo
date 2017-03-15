@@ -2,17 +2,23 @@ import _ from 'lodash'
 
 import { UPDATE_BOARD, DETECT_GROUPS } from '../actions/index'
 
+function vicinities(x, y) {
+  return {
+    up: `${x - 1}-${y}`,
+    down: `${x + 1}-${y}`,
+    left: `${x}-${y - 1}`,
+    right: `${x}-${y + 1}`,
+  }
+}
+
 function checkVicinity(x, y, group) {
   // coordinates around stone position
-  const up = `${x - 1}-${y}`
-  const down = `${x + 1}-${y}`
-  const left = `${x}-${y - 1}`
-  const right = `${x}-${y + 1}`
+  const vicinity = vicinities(x, y)
 
-  return group.includes(up) || 
-          group.includes(down) ||
-          group.includes(left) || 
-          group.includes(right)
+  return group.includes(vicinity.up) || 
+          group.includes(vicinity.down) ||
+          group.includes(vicinity.left) || 
+          group.includes(vicinity.right)
 }
 
 const boardSize = 9
@@ -71,6 +77,7 @@ export default function(state = INITIAL_STATE, action) {
 
     if (foundIndex.length > 1) {
 
+      // gather up arrays which needs to be merged
       let mergedArray = groups[currentPlayer].reduce((acc, cur, index) => {
         if (foundIndex.includes(index)) {
           acc = [...acc, cur]
@@ -79,13 +86,16 @@ export default function(state = INITIAL_STATE, action) {
         return acc
       }, [])
 
-      mergedArray = _.flatten(mergedArray)
-      mergedArray = _.uniq(mergedArray)
+      mergedArray = _.flatten(mergedArray) // e.g. ["0-0", "0-1", "0-2", "0-1"]
+      mergedArray = _.uniq(mergedArray) // e.g. ["0-0", "0-1", "0-2"]
 
+      // remove arrays from original set which were merged and flattened
+      // we want only arrays that were not in foundIndex array
       groups[currentPlayer] = groups[currentPlayer].filter((val, index) => {
         return !foundIndex.includes(index)
       })
 
+      // push new merged and flattened array to player's groups
       groups[currentPlayer].push(mergedArray)
     }
 
