@@ -50,9 +50,8 @@ const mergeGroups = (indexes, groups) => {
   return groups
 }
 
-const boardSize = 9
-
-let board = Array(9).fill().map(() => Array(9).fill(0))
+const generateBoard = size => Array(size).fill().map(() => Array(size).fill(0))
+const board = generateBoard(9)
 
 const INITIAL_STATE = {
   board,
