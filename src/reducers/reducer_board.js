@@ -166,8 +166,13 @@ export default function(state = INITIAL_STATE, action) {
     }
   case COUNT_LIBERTIES:
     let groupsToCount = { ...state.groups }
+
+    // both players groups
+    // 1 = black
+    // 2 = white
     groupsToCount = [groupsToCount[1], groupsToCount[2]]
 
+    // loop each player's groups and their liberties
     const libertyGroups = groupsToCount.map(player => playerGroupLiberties(player, [...state.board]))
 
     return { 
