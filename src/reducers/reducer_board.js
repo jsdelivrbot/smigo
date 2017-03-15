@@ -5,7 +5,7 @@ import { UPDATE_BOARD, DETECT_AND_MERGE_GROUPS } from '../actions/index'
 const vicinities = (x, y) => {
   return {
     up: `${x}-${y - 1}`,
-    down: `${x}-${y - 1}`,
+    down: `${x}-${y + 1}`,
     left: `${x - 1}-${y}`,
     right: `${x + 1}-${y}`,
   }
