@@ -157,20 +157,21 @@ export default function(state = INITIAL_STATE, action) {
       }
     }
   case COUNT_LIBERTIES:
-    const groupsToCount = { ...state.groups }
+    let groupsToCount = { ...state.groups }
+    groupsToCount = [groupsToCount[1], groupsToCount[2]]
 
-    const libertyGroups = groupsToCount[action.payload.player]
-      .map(group => {
+    const libertyGroups = groupsToCount.map(player => {
+      return player.map(group => {
         const libertyCount = getLibertyCoordinates(group, [...state.board]).length
 
         return [group, libertyCount]
       })
+    })
 
     return { 
       ...state,
       liberties: {
-        ...state.liberties,
-        [action.payload.player]: libertyGroups,
+        ...libertyGroups,
       }
     }
   }
