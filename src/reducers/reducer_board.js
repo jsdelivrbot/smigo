@@ -139,9 +139,9 @@ const INITIAL_STATE = {
 export default function(state = INITIAL_STATE, action) {
   switch(action.type) {
   case UPDATE_BOARD:
-    const newBoard = updateBoard(action.payload, [...state.board])
+    const board = updateBoard(action.payload, [...state.board])
 
-    return { ...state, newBoard }
+    return { ...state, board }
   case DETECT_AND_MERGE_GROUPS:
     let groups = { ...state.groups }
 
