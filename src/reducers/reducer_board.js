@@ -56,6 +56,24 @@ const updateBoard = ({ x, y, player }, board) => {
   return board
 }
 
+const iterateGroups = ({ x, y, player }, groups) => {
+  let indexes = []
+
+  groups = groups.filter((group, index) => {
+    if (checkVicinity(x, y, group)) {
+      indexes.push(index)
+
+      groups[index].push(`${x}-${y}`)
+
+      return true
+    }
+
+    return false
+  })
+
+  return [groups, indexes]
+}
+
 const generateBoard = size => Array(size).fill().map(() => Array(size).fill(0))
 
 const INITIAL_STATE = {
@@ -74,38 +92,24 @@ export default function(state = INITIAL_STATE, action) {
     return { ...state, newBoard }
   case DETECT_AND_MERGE_GROUPS:
     let groups = { ...state.groups }
-    let foundIndex = []
 
-    const { x: stoneX, y: stoneY, player: currentPlayer } = action.payload
-    const position = `${stoneX}-${stoneY}`
-
-    groups = groups[currentPlayer]
+    groups = groups[action.payload.player]
 
     // loop player's possible groups and
     // check if current stone position matches any existing groups
-    const nodeGroups = groups.filter((group, index) => {
-      if (checkVicinity(stoneX, stoneY, group)) {
-        foundIndex.push(index)
-
-        groups[index].push(position)
-
-        return true
-      }
-
-      return false
-    })
+    const [nodeGroups, foundIndexes] = iterateGroups(action.payload, groups)
 
     if (!nodeGroups.length) {
-      groups.push([position])
+      groups.push([`${action.payload.x}-${action.payload.y}`])
     }
 
-    groups = mergeGroups(foundIndex, groups)
+    groups = mergeGroups(foundIndexes, groups)
 
     return {
       ...state,
       groups: {
         ...state.groups,
-        [currentPlayer]: groups
+        [action.payload.player]: groups
       }
     }
   }
