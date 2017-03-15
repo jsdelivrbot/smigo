@@ -87,13 +87,31 @@ const calculateLiberties = (x, y, board, liberties) => {
   ]
 
   surroundings.map(coordinate => {
-    if (board[coordinate[0]] &&
-        board[coordinate[0]][coordinate[1]] === 0) {
+    const [coordX, coordY] = coordinate
+
+    if (board[coordX] === undefined) {
+      return
+    }
+
+    if (board[coordX][coordY] === 0) {
       liberties = [...liberties, coordinate.join('-')]
     }
   })
 
   return liberties
+}
+
+const getLibertyCoordinates = (group, board) => {
+  const libertyCoordinates = group.reduce((acc, cur) => {
+    let [coordX, coordY] = cur.split("-");
+
+    coordX = Number(coordX)
+    coordY = Number(coordY)
+
+    return calculateLiberties(coordX, coordY, board, acc)
+  }, [])
+
+  return _.uniq(libertyCoordinates)
 }
 
 const generateBoard = size => Array(size).fill().map(() => Array(size).fill(0))
@@ -139,25 +157,14 @@ export default function(state = INITIAL_STATE, action) {
       }
     }
   case COUNT_LIBERTIES:
-    let groupsToCount = { ...state.groups }
+    const groupsToCount = { ...state.groups }
 
-    const playerGroups = groupsToCount[action.payload.player]
+    const libertyGroups = groupsToCount[action.payload.player]
+      .map(group => {
+        const libertyCount = getLibertyCoordinates(group, [...state.board]).length
 
-    const libertyGroups = playerGroups.map(group => {
-
-      let libertyCoordinates = group.reduce((acc, cur) => {
-        let [coordX, coordY] = cur.split("-");
-
-        coordX = Number(coordX)
-        coordY = Number(coordY)
-
-        return calculateLiberties(coordX, coordY, [...state.board], acc)
-      }, [])
-
-      libertyCoordinates = _.uniq(libertyCoordinates)
-
-      return [group, libertyCoordinates.length]
-    })
+        return [group, libertyCount]
+      })
 
     return { 
       ...state,
