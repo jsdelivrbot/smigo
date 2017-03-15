@@ -21,13 +21,13 @@ function checkVicinity(x, y, group) {
           group.includes(vicinity.right)
 }
 
-function mergeGroups(indexes, groups, player) {
+function mergeGroups(indexes, groups) {
   if (indexes.length < 2) {
     return groups
   }
 
   // gather up arrays which needs to be merged
-  let mergedArray = groups[player].reduce((acc, cur, index) => {
+  let mergedArray = groups.reduce((acc, cur, index) => {
     if (indexes.includes(index)) {
       acc = [...acc, cur]
     }
@@ -40,12 +40,12 @@ function mergeGroups(indexes, groups, player) {
 
   // remove arrays from original set which were merged and flattened
   // we want only arrays that were not in indexes array
-  groups[player] = groups[player].filter((val, index) => {
+  groups = groups.filter((val, index) => {
     return !indexes.includes(index)
   })
 
   // push new merged and flattened array to player's groups
-  groups[player].push(mergedArray)
+  groups.push(mergedArray)
 
   return groups
 }
@@ -86,13 +86,15 @@ export default function(state = INITIAL_STATE, action) {
 
     let foundIndex = []
 
+    groups = groups[currentPlayer]
+
     // loop player's possible groups and
     // check if current stone position matches any existing groups
-    const nodeGroups = groups[currentPlayer].filter((group, index) => {
+    const nodeGroups = groups.filter((group, index) => {
       if (checkVicinity(stoneX, stoneY, group)) {
         foundIndex.push(index)
 
-        groups[currentPlayer][index].push(position)
+        groups[index].push(position)
 
         return true
       }
@@ -101,12 +103,18 @@ export default function(state = INITIAL_STATE, action) {
     })
 
     if (!nodeGroups.length) {
-      groups[currentPlayer].push([position])
+      groups.push([position])
     }
 
-    groups = mergeGroups(foundIndex, groups, currentPlayer)
+    groups = mergeGroups(foundIndex, groups)
 
-    return { ...state, groups }
+    return {
+      ...state,
+      groups: {
+        ...state.groups,
+        [currentPlayer]: groups
+      }
+    }
   }
 
   return state
