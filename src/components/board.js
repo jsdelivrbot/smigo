@@ -37,8 +37,18 @@ class Board extends Component {
   }
 
   renderRow(row, y) {
+    const style = {
+      backgroundColor: "#fff",
+      width: "60px",
+      fontWeight: "bold",
+      textAlign: "right",
+      border: "0",
+      paddingRight: "5px",
+    }
+
     return (
       <tr key={y}>
+        <td key={`td${y}`} style={style}>{y}</td>
         {row.map((node, x) => {
           return (
             <BoardNode
@@ -66,6 +76,12 @@ class Board extends Component {
 
     return (
       <table className="table-bordered" style={style}>
+        <thead>
+          <tr>
+            <th></th>
+            {this.props.board.board[0].map((x, i) => <th key={`th${i}`}>{i}</th>)}
+          </tr>
+        </thead>
         <tbody>
           {this.props.board.board.map(this.renderRow)}
         </tbody>

@@ -13,7 +13,6 @@ import {
   mergeGroups,
   updateBoard,
   iterateGroups,
-  calculateLiberties,
   getLibertyCoordinates,
   playerGroupLiberties,
   reduceOpponentLibertyGroups,

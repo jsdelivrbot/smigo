@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import _ from 'lodash'
 
-import { calculateLiberties, checkVicinity } from '../utils/helpers'
+import { calculateLiberties, checkVicinity, getLibertyCoordinates } from '../utils/helpers'
 
 class BoardNode extends Component {
   constructor(props) {
@@ -120,15 +121,27 @@ class BoardNode extends Component {
     const { x, y } = this.state
     const { whosTurn: player } = this.props.game
 
+    if (!groups[player].length) {
+      return false
+    }
+
     // loop player's possible groups and
     // check if current stone position matches any existing groups
-    const nodeGroups = groups[player].filter((group, index) => checkVicinity(x, y, group))
+    let nodeGroups = groups[player].filter((group, index) => checkVicinity(x, y, group))
+
+    if (!nodeGroups.length) {
+      nodeGroups.push(`${x}-${y}`)
+    }
+
+    nodeGroups = _.flatten(nodeGroups)
 
     // check if the move is not illegal
     // e.g. liberty count is zero
-    const possibleMoveLiberties = calculateLiberties(x, y, { board }, [])
+    const possibleMoveLiberties = getLibertyCoordinates(nodeGroups, { board })
+    const mergedGroup = nodeGroups.concat(possibleMoveLiberties)
+    const finalLiberties = getLibertyCoordinates(mergedGroup, { board })
 
-    return possibleMoveLiberties.length === 0 && nodeGroups.length === 0
+    return finalLiberties.length === possibleMoveLiberties.length || nodeGroups.length === 0
   }
 
   render() {
