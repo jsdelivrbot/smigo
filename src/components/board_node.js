@@ -25,7 +25,6 @@ class BoardNode extends Component {
     this.handleMouseOut = this.handleMouseOut.bind(this)
     this.handleOnClick = this.handleOnClick.bind(this)
     this.checkIllegalMove = this.checkIllegalMove.bind(this)
-    this.shouldAllowKo = this.shouldAllowKo.bind(this)
   }
 
   handleOnClick() {
