@@ -6,7 +6,6 @@ class BoardNode extends Component {
     super(props)
 
     this.state = {
-      clicked: false,
       x: props.x,
       y: props.y,
       owner: props.owner,
@@ -25,16 +24,15 @@ class BoardNode extends Component {
   }
 
   handleOnClick() {
-    if (this.state.clicked) {
+    if (this.state.owner) {
       return null
     }
 
     const { players: { player1, player2 }} = this.props.game
     const { x, y } = this.state
-    const backgroundColor = this.props.onChangeTurn(x, y) % 2 ? player1.color  : player2.color
+    const backgroundColor = this.props.onChangeTurn(x, y) % 2 === 0 ? player1.color  : player2.color
 
     this.setState({
-      clicked: true,
       style: {
         ...this.state.style,
         backgroundColor,
@@ -45,10 +43,9 @@ class BoardNode extends Component {
   }
 
   componentWillReceiveProps({ owner }) {
-    const clicked = owner ? true : false
     let style = this.state.style
 
-    if (!clicked) {
+    if (!owner) {
       style = {
         width: "60px",
         height: "60px",
@@ -59,7 +56,6 @@ class BoardNode extends Component {
     }
 
     this.setState({
-      clicked,
       owner,
       style
     })
@@ -70,7 +66,7 @@ class BoardNode extends Component {
 
     let backgroundColor = this.state.style.backgroundColor
 
-    if (!this.state.clicked) {
+    if (!this.state.owner) {
       backgroundColor = "#CC9966"
     }
 
@@ -89,7 +85,7 @@ class BoardNode extends Component {
 
     let backgroundColor = whosTurn % 2 ? player1.color : player2.color
 
-    if (this.state.clicked) {
+    if (this.state.owner) {
       backgroundColor = this.state.style.backgroundColor
     }
 
