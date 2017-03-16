@@ -9,6 +9,7 @@ class BoardNode extends Component {
       clicked: false,
       x: props.x,
       y: props.y,
+      owner: props.owner,
       style: {
         width: "60px",
         height: "60px",
@@ -40,6 +41,27 @@ class BoardNode extends Component {
         borderRadius: "50%",
         opacity: 1
       }
+    })
+  }
+
+  componentWillReceiveProps({ owner }) {
+    const clicked = owner ? true : false
+    let style = this.state.style
+
+    if (!clicked) {
+      style = {
+        width: "60px",
+        height: "60px",
+        opacity: 1,
+        borderColor: "#000",
+        backgroundColor: "#CC9966",
+      }
+    }
+
+    this.setState({
+      clicked,
+      owner,
+      style
     })
   }
 

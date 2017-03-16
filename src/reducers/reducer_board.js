@@ -189,7 +189,55 @@ export default function(state = INITIAL_STATE, action) {
       }
     }
   case CAPTURE_GROUPS:
-    return state
+    // remove any opponent player's groups from the board if their liberties reach to zero
+    const opponent = action.payload.player % 2 === 0 ? 1 : 2
+
+    // player's current prisoners
+    let capturedPrisoners = state.prisoners[action.payload.player]
+
+    let board = [...state.board]
+
+    const opponentLibertyGroups = [...state.liberties[opponent]].filter(([group, liberties]) => {
+      if (!liberties) {
+        // add group to prisoners
+        capturedPrisoners += group.length
+
+        // remove captured group from board
+        group.map(coordinate => {
+          const [x, y] = coordinate.split("-")
+
+          board[x][y] = 0
+        })
+
+        // remove captured group from liberties
+        return false
+      }
+
+      return true
+    })
+
+    const opponentGroups = opponentLibertyGroups.reduce((prev, cur) => {
+      prev = [...prev, cur[0]]
+
+      return prev
+    }, [])
+
+    return {
+      ...state,
+      board,
+      liberties: {
+        ...state.liberties,
+        [opponent]: opponentLibertyGroups,
+      },
+      groups: {
+        ...state.groups,
+        [opponent]: opponentGroups,
+      },
+      prisoners: {
+        ...state.prisoners,
+        [action.payload.player]: capturedPrisoners,
+      }
+    }
   }
 
   return state

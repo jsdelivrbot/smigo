@@ -45,6 +45,7 @@ class Board extends Component {
               key={`${x}-${y}`}
               x={x}
               y={y}
+              owner={this.props.board.board[x][y]}
               onChangeTurn={this.handleOnClick}
               onCheckTurn={this.handleCheckTurn}
             />
