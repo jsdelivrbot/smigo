@@ -1,4 +1,4 @@
-import { UPDATE_TURN } from '../actions/index'
+import { UPDATE_TURN } from '../actions/types'
 
 const INITIAL_STATE = {
   turn: 0,

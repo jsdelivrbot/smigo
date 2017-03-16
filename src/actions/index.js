@@ -1,7 +1,10 @@
-export const UPDATE_TURN = 'UPDATE_TURN'
-export const UPDATE_BOARD = 'UPDATE_BOARD'
-export const DETECT_AND_MERGE_GROUPS = 'DETECT_AND_MERGE_GROUPS'
-export const COUNT_LIBERTIES = 'COUNT_LIBERTIES'
+import {
+  UPDATE_TURN,
+  UPDATE_BOARD,
+  DETECT_AND_MERGE_GROUPS,
+  COUNT_LIBERTIES,
+  CAPTURE_GROUPS,
+} from './types'
 
 export function updateTurn() {
   return {
@@ -26,6 +29,13 @@ export function detectAndMergeGroups(x, y, player) {
 export function countLiberties(player) {
   return {
     type: COUNT_LIBERTIES,
+    payload: { player }
+  }
+}
+
+export function captureGroups(player) {
+  return {
+    type: CAPTURE_GROUPS,
     payload: { player }
   }
 }

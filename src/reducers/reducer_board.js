@@ -4,7 +4,8 @@ import { 
   UPDATE_BOARD,
   DETECT_AND_MERGE_GROUPS,
   COUNT_LIBERTIES,
-} from '../actions/index'
+  CAPTURE_GROUPS,
+} from '../actions/types'
 
 const vicinity = (x, y) => {
   return {
@@ -54,7 +55,8 @@ const mergeGroups = (indexes, groups) => {
   return groups
 }
 
-const updateBoard = ({ x, y, player }, board) => {
+const updateBoard = ({ x, y, player }, state) => {
+  let board = [...state.board]
   board[x][y] = player
 
   return board
@@ -78,13 +80,15 @@ const iterateGroups = ({ x, y, player }, groups) => {
   return [groups, indexes]
 }
 
-const calculateLiberties = (x, y, board, liberties) => {
+const calculateLiberties = (x, y, state, liberties) => {
   const surroundings = [
     [x, y - 1],
     [x, y + 1],
     [x - 1, y],
     [x + 1, y],
   ]
+
+  const board = [...state.board]
 
   surroundings.map(coordinate => {
     const [coordX, coordY] = coordinate
@@ -101,22 +105,22 @@ const calculateLiberties = (x, y, board, liberties) => {
   return liberties
 }
 
-const getLibertyCoordinates = (group, board) => {
+const getLibertyCoordinates = (group, state) => {
   const libertyCoordinates = group.reduce((acc, cur) => {
     let [coordX, coordY] = cur.split("-");
 
     coordX = Number(coordX)
     coordY = Number(coordY)
 
-    return calculateLiberties(coordX, coordY, board, acc)
+    return calculateLiberties(coordX, coordY, state, acc)
   }, [])
 
   return _.uniq(libertyCoordinates)
 }
 
-const playerGroupLiberties = (player, board) => {
+const playerGroupLiberties = (player, state) => {
   return player.map(group => {
-    const libertyCount = getLibertyCoordinates(group, board).length
+    const libertyCount = getLibertyCoordinates(group, state).length
 
     return [group, libertyCount]
   })
@@ -126,6 +130,10 @@ const generateBoard = size => Array(size).fill().map(() => Array(size).fill(0))
 
 const INITIAL_STATE = {
   board: generateBoard(9),
+  prisoners: {
+    1: 0,
+    2: 0,
+  },
   liberties: {
     1: [],
     2: [],
@@ -139,41 +147,39 @@ const INITIAL_STATE = {
 export default function(state = INITIAL_STATE, action) {
   switch(action.type) {
   case UPDATE_BOARD:
-    const board = updateBoard(action.payload, [...state.board])
-
-    return { ...state, board }
+    return {
+      ...state,
+      board: updateBoard(action.payload, state)
+    }
   case DETECT_AND_MERGE_GROUPS:
-    let groups = { ...state.groups }
-
-    groups = groups[action.payload.player]
+    let playerGroups = state.groups[action.payload.player]
 
     // loop player's possible groups and
     // check if current stone position matches any existing groups
-    const [nodeGroups, foundIndexes] = iterateGroups(action.payload, groups)
+    const [nodeGroups, foundIndexes] = iterateGroups(action.payload, playerGroups)
 
     if (!nodeGroups.length) {
-      groups.push([`${action.payload.x}-${action.payload.y}`])
+      playerGroups.push([`${action.payload.x}-${action.payload.y}`])
     }
 
-    groups = mergeGroups(foundIndexes, groups)
+    playerGroups = mergeGroups(foundIndexes, playerGroups)
 
     return {
       ...state,
       groups: {
         ...state.groups,
-        [action.payload.player]: groups
+        [action.payload.player]: playerGroups
       }
     }
   case COUNT_LIBERTIES:
-    let groupsToCount = { ...state.groups }
-
     // both players groups
     // 1 = black
     // 2 = white
-    groupsToCount = [groupsToCount[1], groupsToCount[2]]
 
     // loop each player's groups and their liberties
-    const libertyGroups = groupsToCount.map(player => playerGroupLiberties(player, [...state.board]))
+    const libertyGroups = Object
+      .values({ ...state.groups })
+      .map(player => playerGroupLiberties(player, state))
 
     return { 
       ...state,
@@ -182,6 +188,8 @@ export default function(state = INITIAL_STATE, action) {
         2: libertyGroups[1],
       }
     }
+  case CAPTURE_GROUPS:
+    return state
   }
 
   return state

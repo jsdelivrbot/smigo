@@ -7,6 +7,7 @@ import {
   updateBoard,
   detectAndMergeGroups,
   countLiberties,
+  captureGroups,
 } from '../actions/index'
 import BoardNode from './board_node'
 
@@ -20,13 +21,13 @@ class Board extends Component {
   }
 
   handleOnClick(x, y) {
-    this.props.updateTurn()
-
-    const whosTurn = this.props.game.whosTurn
+    const { whosTurn } = this.props.game
 
     this.props.updateBoard(x, y, whosTurn)
     this.props.detectAndMergeGroups(x, y, whosTurn)
     this.props.countLiberties(whosTurn)
+    this.props.captureGroups(whosTurn)
+    this.props.updateTurn()
 
     return whosTurn
   }
@@ -84,7 +85,8 @@ function mapDispatchToProps(dispatch) {
     updateTurn,
     updateBoard,
     detectAndMergeGroups,
-    countLiberties
+    countLiberties,
+    captureGroups,
   }
 
   return bindActionCreators(actions, dispatch)
