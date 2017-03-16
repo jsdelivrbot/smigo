@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
+import { calculateLiberties, checkVicinity } from '../utils/helpers'
+
 class BoardNode extends Component {
   constructor(props) {
     super(props)
@@ -21,10 +23,11 @@ class BoardNode extends Component {
     this.handleMouseOver = this.handleMouseOver.bind(this)
     this.handleMouseOut = this.handleMouseOut.bind(this)
     this.handleOnClick = this.handleOnClick.bind(this)
+    this.checkIllegalMove = this.checkIllegalMove.bind(this)
   }
 
   handleOnClick() {
-    if (this.state.owner) {
+    if (this.state.owner || this.checkIllegalMove()) {
       return null
     }
 
@@ -81,6 +84,19 @@ class BoardNode extends Component {
 
   handleMouseOver() {
     const previousStyle = this.state.style
+
+    if (!this.state.owner && this.checkIllegalMove()) {
+      this.setState({
+        style: {
+          ...previousStyle,
+          backgroundColor: "#f00",
+          opacity: 0.5,
+        }
+      })
+
+      return
+    }
+
     const { whosTurn, players: { player1, player2 }} = this.props.game
 
     let backgroundColor = whosTurn % 2 ? player1.color : player2.color
@@ -99,6 +115,22 @@ class BoardNode extends Component {
     })
   }
 
+  checkIllegalMove() {
+    const { board, groups } = this.props.board
+    const { x, y } = this.state
+    const { whosTurn: player } = this.props.game
+
+    // loop player's possible groups and
+    // check if current stone position matches any existing groups
+    const nodeGroups = groups[player].filter((group, index) => checkVicinity(x, y, group))
+
+    // check if the move is not illegal
+    // e.g. liberty count is zero
+    const possibleMoveLiberties = calculateLiberties(x, y, { board }, [])
+
+    return possibleMoveLiberties.length === 0 && nodeGroups.length === 0
+  }
+
   render() {
     return (
       <td style={this.state.style}
@@ -112,7 +144,10 @@ class BoardNode extends Component {
 
 
 function mapStateToProps(state) {
-  return { game: state.game }
+  return {
+    game: state.game,
+    board: state.board,
+  }
 }
 
 export default connect(mapStateToProps)(BoardNode)
