@@ -121,6 +121,10 @@ class BoardNode extends Component {
     const { x, y } = this.state
     const { whosTurn: player } = this.props.game
 
+    const opponent = player % 2 === 0 ? 1 : 2
+
+    let allowKo = false
+
     if (!groups[player].length) {
       return false
     }
@@ -141,7 +145,34 @@ class BoardNode extends Component {
     const mergedGroup = nodeGroups.concat(possibleMoveLiberties)
     const finalLiberties = getLibertyCoordinates(mergedGroup, { board })
 
-    return finalLiberties.length === possibleMoveLiberties.length || nodeGroups.length === 0
+    // should check if any of the opponent's groups are in atari
+    // if they are in atari, then check if ko is available
+    if (finalLiberties.length === possibleMoveLiberties.length) {
+      let opponentNodeGroups = groups[opponent].filter((group, index) => checkVicinity(x, y, group))
+      opponentNodeGroups = _.flatten(opponentNodeGroups)
+
+      opponentNodeGroups.map(group => {
+        if (allowKo) {
+          return
+        }
+
+        let [coordX, coordY] = group.split("-");
+
+        coordX = Number(coordX)
+        coordY = Number(coordY)
+
+        const opponentGroupLiberties = calculateLiberties(coordX, coordY, { board }, [])
+          .filter(coordinate => coordinate !== `${x}-${y}`)
+          .length
+
+        // allow ko if opponent has no liberties after player's move
+        if (opponentGroupLiberties === 0) {
+          allowKo = true
+        }
+      })
+    }
+
+    return (finalLiberties.length === possibleMoveLiberties.length && !allowKo) || nodeGroups.length === 0
   }
 
   render() {
