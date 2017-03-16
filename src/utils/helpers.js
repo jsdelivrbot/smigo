@@ -96,6 +96,33 @@ export const calculateLiberties = (x, y, state, liberties) => {
   return liberties
 }
 
+export const belongsToGroup = (x, y, state, player) => {
+  const surroundings = [
+    [x, y - 1],
+    [x, y + 1],
+    [x - 1, y],
+    [x + 1, y],
+  ]
+
+  const board = [...state.board]
+
+  let belongsTo = false
+
+  surroundings.map(coordinate => {
+    const [coordX, coordY] = coordinate
+
+    if (board[coordX] === undefined) {
+      return
+    }
+
+    if (board[coordX][coordY] === player) {
+      belongsTo = true
+    }
+  })
+
+  return belongsTo
+}
+
 export const getLibertyCoordinates = (group, state) => {
   const libertyCoordinates = group.reduce((acc, cur) => {
     let [coordX, coordY] = cur.split("-");

@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import _ from 'lodash'
 
-import { calculateLiberties, checkVicinity, getLibertyCoordinates } from '../utils/helpers'
+import { calculateLiberties, checkVicinity, getLibertyCoordinates, belongsToGroup } from '../utils/helpers'
 
 class BoardNode extends Component {
   constructor(props) {
@@ -166,7 +166,8 @@ class BoardNode extends Component {
           .length
 
         // allow ko if opponent has no liberties after player's move
-        if (opponentGroupLiberties === 0) {
+        // if opponent's stone belongs to a group, it means a suicidal move which is illegal
+        if (opponentGroupLiberties === 0 && !belongsToGroup(coordX, coordY, { board }, opponent)) {
           allowKo = true
         }
       })
