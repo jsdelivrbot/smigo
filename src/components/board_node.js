@@ -119,7 +119,8 @@ class BoardNode extends Component {
   shouldAllowKo(groups, opponent, x, y, board) {
     let allowKo = false
     let legalMove = false
-    let opponentNodeGroups = groups.filter((group, index) => checkVicinity(x, y, group))
+
+    const opponentNodeGroups = groups.filter((group, index) => checkVicinity(x, y, group))
 
     opponentNodeGroups.map(group => {
       if (allowKo || legalMove) {
@@ -139,7 +140,6 @@ class BoardNode extends Component {
 
         return accumulator + otherLiberties
       }, 0)
-
 
       // allow ko if opponent has no liberties after player's move
       // if opponent's stone belongs to a group, it means a suicidal move which is illegal
