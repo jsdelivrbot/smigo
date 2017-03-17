@@ -118,31 +118,37 @@ class BoardNode extends Component {
 
   shouldAllowKo(groups, opponent, x, y, board) {
     let allowKo = false
+    let shouldAllowCapture = false
     let opponentNodeGroups = groups.filter((group, index) => checkVicinity(x, y, group))
     opponentNodeGroups = _.flatten(opponentNodeGroups)
 
-    opponentNodeGroups.map(group => {
-      if (allowKo) {
+    opponentNodeGroups.map(stone => {
+      if (allowKo || shouldAllowCapture) {
         return
       }
 
-      let [coordX, coordY] = group.split("-");
+      let [coordX, coordY] = stone.split("-");
 
       coordX = Number(coordX)
       coordY = Number(coordY)
 
-      const opponentGroupLiberties = calculateLiberties(coordX, coordY, { board }, [])
+      // calculate how many liberties are left if we exclude the current position
+      const otherLiberties = calculateLiberties(coordX, coordY, { board }, [])
         .filter(coordinate => coordinate !== `${x}-${y}`)
         .length
 
       // allow ko if opponent has no liberties after player's move
       // if opponent's stone belongs to a group, it means a suicidal move which is illegal
-      if (opponentGroupLiberties === 0 && !belongsToGroup(coordX, coordY, { board }, opponent)) {
+      if (otherLiberties === 0 && !belongsToGroup(coordX, coordY, { board }, opponent)) {
         allowKo = true
+      }
+
+      if (otherLiberties === 0 && belongsToGroup(coordX, coordY, { board }, opponent)) {
+        shouldAllowCapture = true
       }
     })
 
-    return allowKo
+    return [allowKo, shouldAllowCapture]
   }
 
   checkIllegalMove() {
@@ -153,10 +159,7 @@ class BoardNode extends Component {
     const opponent = player % 2 === 0 ? 1 : 2
 
     let allowKo = false
-
-    if (!groups[player].length) {
-      return false
-    }
+    let shouldAllowCapture = false
 
     // loop player's possible groups and
     // check if current stone position matches any existing groups
@@ -177,10 +180,12 @@ class BoardNode extends Component {
     // should check if any of the opponent's groups are in atari
     // if they are in atari, then check if ko is available
     if (finalLiberties.length === possibleMoveLiberties.length) {
-      allowKo = this.shouldAllowKo(groups[opponent], opponent, x, y, board);
+      [allowKo, shouldAllowCapture] = this.shouldAllowKo(groups[opponent], opponent, x, y, board);
     }
 
-    return (finalLiberties.length === possibleMoveLiberties.length && !allowKo) || nodeGroups.length === 0
+    const illegalMove = (finalLiberties.length === possibleMoveLiberties.length && !allowKo && !shouldAllowCapture)
+
+    return illegalMove || nodeGroups.length === 0
   }
 
   render() {
