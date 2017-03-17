@@ -1,5 +1,4 @@
-import { takeEvery } from 'redux-saga'
-import { fork, take, put } from 'redux-saga/effects'
+import { fork, takeEvery, put } from 'redux-saga/effects'
 
 import { PLACE_STONE_ON_BOARD } from '../actions/types'
 import { 
