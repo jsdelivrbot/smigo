@@ -8,12 +8,9 @@ import { 
 } from '../actions/types'
 
 import {
-  vicinity,
-  checkVicinity,
   mergeGroups,
   updateBoard,
   iterateGroups,
-  getLibertyCoordinates,
   playerGroupLiberties,
   reduceOpponentLibertyGroups,
 } from '../utils/helpers'
