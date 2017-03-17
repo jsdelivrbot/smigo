@@ -2,13 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
-import {
-  updateTurn,
-  updateBoard,
-  detectAndMergeGroups,
-  countLiberties,
-  captureGroups,
-} from '../actions/index'
+import { placeStoneOnBoard } from '../actions/index'
 import BoardNode from './board_node'
 
 class Board extends Component {
@@ -23,11 +17,7 @@ class Board extends Component {
   handleOnClick(x, y) {
     const { whosTurn } = this.props.game
 
-    this.props.updateBoard(x, y, whosTurn)
-    this.props.detectAndMergeGroups(x, y, whosTurn)
-    this.props.countLiberties(whosTurn)
-    this.props.captureGroups(whosTurn)
-    this.props.updateTurn()
+    this.props.placeStoneOnBoard(x, y, whosTurn)
 
     return whosTurn
   }
@@ -98,13 +88,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  const actions = {
-    updateTurn,
-    updateBoard,
-    detectAndMergeGroups,
-    countLiberties,
-    captureGroups,
-  }
+  const actions = { placeStoneOnBoard }
 
   return bindActionCreators(actions, dispatch)
 }
