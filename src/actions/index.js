@@ -4,7 +4,15 @@ import {
   DETECT_AND_MERGE_GROUPS,
   COUNT_LIBERTIES,
   CAPTURE_GROUPS,
+  PLACE_STONE_ON_BOARD,
 } from './types'
+
+export function placeStoneOnBoard(x, y, player) {
+  return {
+    type: PLACE_STONE_ON_BOARD,
+    payload: { x, y, player }
+  }
+}
 
 export function updateTurn() {
   return {

@@ -1,7 +1,7 @@
 module.exports = {
-  entry: [
-    './src/index.js'
-  ],
+  entry: {
+    js: ['babel-polyfill', './src/index.js']
+  },
   output: {
     path: __dirname,
     publicPath: '/',
