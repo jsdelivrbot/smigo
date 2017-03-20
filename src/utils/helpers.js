@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 export const vicinity = (x, y) => {
   return {
     up: `${x}-${y - 1}`,
