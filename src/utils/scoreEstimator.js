@@ -43,7 +43,7 @@ const scoreEstimator = (board) => {
 
   net.makeLayers([
     { type: 'input', out_sx: 1, out_sy: 1, out_depth: 2 },
-    { type: 'fc', num_neurons: 2, activation: 'relu' },
+    { type: 'fc', num_neurons: 2, activation: 'sigmoid' },
     { type: 'regression', num_neurons: 1 }
   ])
 

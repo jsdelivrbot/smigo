@@ -69,7 +69,7 @@ class Board extends Component {
                     textAlign: "center",
                   }
 
-                  if (owner === 2) {
+                  if (owner >= 2) {
                     style.backgroundColor = "#fff"
                   }
 
