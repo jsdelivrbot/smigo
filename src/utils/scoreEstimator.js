@@ -43,7 +43,8 @@ const scoreEstimator = (board) => {
 
   net.makeLayers([
     { type: 'input', out_sx: 1, out_sy: 1, out_depth: 2 },
-    { type: 'fc', num_neurons: 2, activation: 'sigmoid' },
+    { type: 'fc', num_neurons: 6, activation: 'tanh' },
+    { type: 'fc', num_neurons: 2, activation: 'tanh' },
     { type: 'regression', num_neurons: 1 }
   ])
 
@@ -60,15 +61,13 @@ const scoreEstimator = (board) => {
 
   board.map((group, y) => {
     group.map((player, x) => {
-      if (!player) {
-        const predictValue = predict(net, [x, y])
+      const predictValue = predict(net, [x, y])
 
-        if (!prediction[x]) {
-          prediction[x] = []
-        }
-
-        prediction[x][y] = predictValue
+      if (!prediction[x]) {
+        prediction[x] = []
       }
+
+      prediction[x][y] = predictValue
     })
   })
 
