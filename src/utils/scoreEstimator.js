@@ -2,15 +2,13 @@ const convnetjs = require('convnetjs')
 
 const learn = (trainer, net, data, labels) => {
   for(let j = 0; j < 2000; j++){
-    for (let i = 0; i < labels.length; i++) {
-        let x = new convnetjs.Vol(data[i]);
+    labels.map((label, i) => {
+        const x = new convnetjs.Vol(data[i]);
 
-        let real_value = labels[i]
+        trainer.train(x, [label]);
 
-        trainer.train(x, [real_value]);
-
-        let predicted_values = net.forward(x);
-    }
+        const predicted_values = net.forward(x);
+    })
   }
 }
 
@@ -29,18 +27,23 @@ const scoreEstimator = (board) => {
     { type: 'regression', num_neurons: 1 }
   ]);
 
-  let data = []
-  let labels = []
-
-  board.map((group, y) => {
-    group.map((player, x) => {
+  const { data, labels } = board.reduce((accumulator, current, indY) => {
+    const { coordinates, players } = current.reduce((accumulator, player, indX) => {
       if (player) {
-        data.push([x, y])
-
-        labels.push(player)
+        accumulator.coordinates.push([indX, indY])
+        accumulator.players.push(player)
       }
-    })
-  })
+
+      return accumulator
+    }, { coordinates: [], players: [] })
+
+    if (coordinates.length) {
+      accumulator.data = accumulator.data.concat(coordinates)
+      accumulator.labels = accumulator.labels.concat(players)
+    }
+
+    return accumulator
+  }, { data: [], labels: [] })
 
   if (data.length === 0) {
     return false
