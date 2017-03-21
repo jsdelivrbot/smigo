@@ -3,7 +3,7 @@ const convnetjs = require('convnetjs')
 const learn = ({ trainer, net, data, labels }) => {
   for(let j = 0; j < 2000; j++){
     labels.map((label, i) => {
-      const x = new convnetjs.Vol(data[i])
+      const x = createVol(data[i])
 
       trainer.train(x, [label])
     })
@@ -11,8 +11,9 @@ const learn = ({ trainer, net, data, labels }) => {
 }
 
 const predict = (net, data) => {
-  const x = new convnetjs.Vol(data)
+  const x = createVol(data)
   const predicted_value = net.forward(x)
+
   return predicted_value.w[0]
 }
 
@@ -47,6 +48,8 @@ const createNet = layers => {
 const createTrainer = (net, settings) => {
   return new convnetjs.SGDTrainer(net, settings)
 }
+
+const createVol = data => new convnetjs.Vol(data)
 
 const scoreEstimator = board => {
   const { data, labels } = getDataAndLabels(board)
