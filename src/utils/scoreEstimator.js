@@ -6,8 +6,6 @@ const learn = (trainer, net, data, labels) => {
         const x = new convnetjs.Vol(data[i]);
 
         trainer.train(x, [label]);
-
-        const predicted_values = net.forward(x);
     })
   }
 }
