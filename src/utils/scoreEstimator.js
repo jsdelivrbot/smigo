@@ -36,26 +36,16 @@ const getDataAndLabels = (board) => {
   }, { data: [], labels: [] })
 }
 
-const createNet = () => {
+const createNet = (layers) => {
   const net = new convnetjs.Net()
 
-  net.makeLayers([
-    { type: 'input', out_sx: 1, out_sy: 1, out_depth: 2 },
-    { type: 'fc', num_neurons: 6, activation: 'tanh' },
-    { type: 'fc', num_neurons: 2, activation: 'tanh' },
-    { type: 'regression', num_neurons: 1 }
-  ])
+  net.makeLayers(layers)
 
   return net
 }
 
-const createTrainer = (net) => {
-  return new convnetjs.SGDTrainer(net, {
-    learning_rate: 0.01,
-    momentum: 0.2,
-    batch_size: 1,
-    l2_decay: 0.001
-  })
+const createTrainer = (net, settings) => {
+  return new convnetjs.SGDTrainer(net, settings)
 }
 
 const scoreEstimator = (board) => {
@@ -65,9 +55,23 @@ const scoreEstimator = (board) => {
     return false
   }
 
-  const net = createNet()
+  const layers = [
+    { type: 'input', out_sx: 1, out_sy: 1, out_depth: 2 },
+    { type: 'fc', num_neurons: 6, activation: 'tanh' },
+    { type: 'fc', num_neurons: 2, activation: 'tanh' },
+    { type: 'regression', num_neurons: 1 }
+  ]
 
-  const trainer = createTrainer(net)
+  const net = createNet(layers)
+
+  const trainerSettings = {
+    learning_rate: 0.01,
+    momentum: 0.2,
+    batch_size: 1,
+    l2_decay: 0.001
+  }
+
+  const trainer = createTrainer(net, trainerSettings)
 
   learn(trainer, net, data, labels)
 
