@@ -3,28 +3,20 @@ const convnetjs = require('convnetjs')
 const learn = (trainer, net, data, labels) => {
   for(let j = 0; j < 2000; j++){
     labels.map((label, i) => {
-        const x = new convnetjs.Vol(data[i]);
+        const x = new convnetjs.Vol(data[i])
 
-        trainer.train(x, [label]);
+        trainer.train(x, [label])
     })
   }
 }
 
 const predict = (net, data) => {
-  const x = new convnetjs.Vol(data);
-  const predicted_value = net.forward(x);
-  return predicted_value.w[0];
+  const x = new convnetjs.Vol(data)
+  const predicted_value = net.forward(x)
+  return predicted_value.w[0]
 }
 
 const scoreEstimator = (board) => {
-  var net = new convnetjs.Net();
-
-  net.makeLayers([
-    { type: 'input', out_sx: 1, out_sy: 1, out_depth: 2 },
-    { type: 'fc', num_neurons: 2, activation: 'relu' },
-    { type: 'regression', num_neurons: 1 }
-  ]);
-
   const { data, labels } = board.reduce((accumulator, current, indY) => {
     const { coordinates, players } = current.reduce((accumulator, player, indX) => {
       if (player) {
@@ -47,9 +39,22 @@ const scoreEstimator = (board) => {
     return false
   }
 
-  const trainer = new convnetjs.SGDTrainer(net, {learning_rate:0.01, momentum:0.2, batch_size:1, l2_decay:0.001});
+  var net = new convnetjs.Net()
 
-  learn(trainer, net, data, labels);
+  net.makeLayers([
+    { type: 'input', out_sx: 1, out_sy: 1, out_depth: 2 },
+    { type: 'fc', num_neurons: 2, activation: 'relu' },
+    { type: 'regression', num_neurons: 1 }
+  ])
+
+  const trainer = new convnetjs.SGDTrainer(net, {
+    learning_rate: 0.01,
+    momentum: 0.2,
+    batch_size: 1,
+    l2_decay: 0.001
+  })
+
+  learn(trainer, net, data, labels)
 
   let prediction = []
 
