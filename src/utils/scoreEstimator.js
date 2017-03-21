@@ -45,9 +45,7 @@ const createNet = layers => {
   return net
 }
 
-const createTrainer = (net, settings) => {
-  return new convnetjs.SGDTrainer(net, settings)
-}
+const createTrainer = ({ net, settings }) => new convnetjs.SGDTrainer(net, settings)
 
 const createVol = data => new convnetjs.Vol(data)
 
@@ -67,14 +65,14 @@ const scoreEstimator = board => {
 
   const net = createNet(layers)
 
-  const trainerSettings = {
+  const settings = {
     learning_rate: 0.01,
     momentum: 0.2,
     batch_size: 1,
     l2_decay: 0.001
   }
 
-  const trainer = createTrainer(net, trainerSettings)
+  const trainer = createTrainer({ net, settings })
 
   learn({ trainer, net, data, labels })
 
