@@ -1,6 +1,6 @@
 const convnetjs = require('convnetjs')
 
-const learn = (trainer, net, data, labels) => {
+const learn = ({ trainer, net, data, labels }) => {
   for(let j = 0; j < 2000; j++){
     labels.map((label, i) => {
       const x = new convnetjs.Vol(data[i])
@@ -16,7 +16,7 @@ const predict = (net, data) => {
   return predicted_value.w[0]
 }
 
-const getDataAndLabels = (board) => {
+const getDataAndLabels = board => {
   return board.reduce((accumulator, current, y) => {
     const { coordinates, players } = current.reduce((accumulator, player, x) => {
       if (player) {
@@ -36,7 +36,7 @@ const getDataAndLabels = (board) => {
   }, { data: [], labels: [] })
 }
 
-const createNet = (layers) => {
+const createNet = layers => {
   const net = new convnetjs.Net()
 
   net.makeLayers(layers)
@@ -48,7 +48,7 @@ const createTrainer = (net, settings) => {
   return new convnetjs.SGDTrainer(net, settings)
 }
 
-const scoreEstimator = (board) => {
+const scoreEstimator = board => {
   const { data, labels } = getDataAndLabels(board)
 
   if (data.length === 0) {
@@ -73,7 +73,7 @@ const scoreEstimator = (board) => {
 
   const trainer = createTrainer(net, trainerSettings)
 
-  learn(trainer, net, data, labels)
+  learn({ trainer, net, data, labels })
 
   let prediction = []
 
