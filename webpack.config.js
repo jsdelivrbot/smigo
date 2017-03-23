@@ -1,5 +1,6 @@
 const webpack = require('webpack')
-const path = require('path');
+const path = require('path')
+const CleanWebpackPlugin = require('clean-webpack-plugin')
 
 module.exports = {
   entry: {
@@ -22,6 +23,12 @@ module.exports = {
       // But since there are no more common modules between them
       // we end up with just the runtime code included in the manifest file
       name: 'manifest'
+    }),
+    new CleanWebpackPlugin(['dist'], {
+      root: __dirname,
+      verbose: true,
+      dry: false,
+      exclude: ['shared.js']
     })
   ],
   module: {
