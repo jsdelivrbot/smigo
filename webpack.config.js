@@ -1,6 +1,7 @@
 const webpack = require('webpack')
 const path = require('path')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
   entry: {
@@ -29,6 +30,9 @@ module.exports = {
       verbose: true,
       dry: false,
       exclude: ['shared.js']
+    }),
+    new HtmlWebpackPlugin({
+      title: 'smigo: A Go application'
     })
   ],
   module: {
