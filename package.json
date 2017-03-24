@@ -4,7 +4,8 @@
   "description": "A Go board game",
   "main": "index.js",
   "scripts": {
-    "start": "node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js",
+    "build": "NODE_ENV=production webpack -p",
+    "start": "NODE_ENV=development node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js",
     "test": "mocha --compilers js:babel-core/register --recursive ./test",
     "test:watch": "npm run test -- --watch"
   },
