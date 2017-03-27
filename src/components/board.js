@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
+import { Row, Col } from 'antd'
+
 import { placeStoneOnBoard } from '../actions/index'
 import BoardNode from './board_node'
 
@@ -22,7 +24,7 @@ class Board extends Component {
 
   drawPrediction() {
     const style = {
-      backgroundColor: "#CC9966"
+      backgroundColor: "#CC9966",
     }
 
     const rowStyle = {
@@ -154,7 +156,6 @@ class Board extends Component {
   render() {
     const style = {
       backgroundColor: "#CC9966",
-      float: "left",
     }
 
     if (!this.props.board) {
@@ -162,25 +163,28 @@ class Board extends Component {
     }
 
     return (
-      <div className="table-container" style={{ width: "100%" }}>
-        <table className="table-bordered" style={style}>
-          <thead>
-            <tr>
-              <th></th>
-              {this.props.board.board[0].map((x, i) => <th key={`th${i}`}>{i}</th>)}
-            </tr>
-          </thead>
-          <tbody>
-            {this.props.board.board.map(this.renderRow)}
-          </tbody>
-        </table>
-        {this.drawPrediction()}
-        <br />
-        <button onClick={this.handlePrediction}>
-          Predict
-        </button>
-
-      </div>
+      <Row>
+        <Col span="12">
+          <table className="table-bordered" style={style}>
+            <thead>
+              <tr>
+                <th></th>
+                {this.props.board.board[0].map((x, i) => <th key={`th${i}`}>{i}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              {this.props.board.board.map(this.renderRow)}
+            </tbody>
+          </table>
+        </Col>
+        <Col span="12">
+          {this.drawPrediction()}
+          <br />
+          <button onClick={this.handlePrediction}>
+            Predict
+          </button>
+        </Col>
+      </Row>
     )
   }
 }
