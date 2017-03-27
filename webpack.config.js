@@ -23,7 +23,6 @@ module.exports = {
           filename: path.resolve(__dirname, 'index.html'),
           inject: 'body'
         }),
-        // ["import", { libraryName: "antd", style: "css" }]
       ]
     : [
         new CleanWebpackPlugin(['dist'], {
@@ -51,7 +50,6 @@ module.exports = {
           filename: path.resolve(__dirname, 'dist/index.html'),
           inject: 'body'
         }),
-        // ["import", { libraryName: "antd", style: "css" }] // `style: true` for less
       ],
   module: {
     rules: [
