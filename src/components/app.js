@@ -6,6 +6,7 @@ const { Header, Content, Footer } = Layout
 
 import Home from './home'
 import Game from './game'
+import Editor from './editor'
 
 class App extends Component {
   render() {
@@ -21,13 +22,14 @@ class App extends Component {
           >
             <Menu.Item key="1"><Link to="/">Home</Link></Menu.Item>
             <Menu.Item key="2"><Link to="game">Game</Link></Menu.Item>
-            <Menu.Item key="3">Editor</Menu.Item>
+            <Menu.Item key="3"><Link to="editor">Editor</Link></Menu.Item>
           </Menu>
         </Header>
         <Content style={{ padding: '0 50px' }}>
           <div style={{ background: '#fff', padding: 24, minHeight: 280 }}>
             <Route exact path="/" component={Home} />
             <Route path="/game" component={Game} />
+            <Route path="/editor" component={Editor} />
           </div>
         </Content>
         <Footer style={{ textAlign: 'center' }}>
