@@ -81,6 +81,10 @@ const SGFParser = filePath => {
   return new Promise((resolve, reject) => {
     fs.readFile(filePath, 'utf8', (err, data) => {
 
+      if (err) {
+        reject('error while reading the file')
+      }
+
       const splitData = data.split(';')
       const gameInfo = splitData[1].split('\n')
 
