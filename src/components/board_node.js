@@ -8,6 +8,16 @@ class BoardNode extends Component {
   constructor(props) {
     super(props)
 
+    let backgroundColor = "#CC9966"
+    let borderRadius = 0
+
+    if (props.owner) {
+      const { players: { player1, player2 }} = this.props.game
+
+      backgroundColor = props.owner % 2 === 0 ? player2.color : player1.color
+      borderRadius = "50%"
+    }
+
     this.state = {
       x: props.x,
       y: props.y,
@@ -17,7 +27,8 @@ class BoardNode extends Component {
         height: "60px",
         opacity: 1,
         borderColor: "#000",
-        backgroundColor: "#CC9966",
+        borderRadius,
+        backgroundColor,
       }
     }
 

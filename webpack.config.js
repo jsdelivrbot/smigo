@@ -22,7 +22,7 @@ module.exports = {
           template: 'index.html',
           filename: path.resolve(__dirname, 'index.html'),
           inject: 'body'
-        })
+        }),
       ]
     : [
         new CleanWebpackPlugin(['dist'], {
@@ -58,8 +58,15 @@ module.exports = {
         include: path.resolve(__dirname, "src"),
         loader: "babel-loader",
         options: {
+          "plugins": [
+            ["import", { "libraryName": "antd", "style": "css" }] // `style: true` for less
+          ],
           presets: ['react', 'es2015', 'stage-1']
         }
+      },
+      {
+        test: /\.css$/,
+        use: [ 'style-loader', 'css-loader' ]
       }
     ]
   },
