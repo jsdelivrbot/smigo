@@ -9,6 +9,14 @@ import Game from './game'
 import Editor from './editor'
 
 class App extends Component {
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      selected: 1
+    }
+  }
+
   render() {
     return (
       <Layout className="layout" style={{ width: '100%' }}>
@@ -17,8 +25,9 @@ class App extends Component {
           <Menu
             theme="dark"
             mode="horizontal"
-            defaultSelectedKeys={['1']}
+            defaultSelectedKeys={[`${this.state.selected}`]}
             style={{ lineHeight: '64px' }}
+            onClick={e => { this.setState({ selected: e.key })}}
           >
             <Menu.Item key="1"><Link to="/">Home</Link></Menu.Item>
             <Menu.Item key="2"><Link to="game">Game</Link></Menu.Item>

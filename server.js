@@ -12,6 +12,8 @@ const cors = require('cors')
 app.use(cors())
 
 const scoreEstimator = require('./src/utils/scoreEstimator').scoreEstimator
+const handleUpload = require('./src/utils/handleUpload').handleUpload
+const SGFParser = require('./src/utils/SGF_parser').SGFParser
 
 app.use(express.static(__dirname))
 
@@ -29,6 +31,14 @@ app.post('/api/predict', (req, res) => {
     }
 
     res.json({ prediction })
+  })
+})
+
+app.post('/api/upload', (req, res) => {
+  handleUpload(req, res, (filePath, response) => {
+    SGFParser(filePath)
+      .then(parsedGame => response.send(JSON.stringify(parsedGame)))
+      .catch(error => response.send(JSON.stringify({ error })))
   })
 })
 

@@ -17,7 +17,9 @@ class BoardPrediction extends Component {
   }
 
   handlePrediction() {
-    fetch('http://localhost:8081/api/predict', {
+    const url = `http://${window.location.hostname}:8081/api/predict`
+
+    fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
