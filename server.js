@@ -37,7 +37,7 @@ app.post('/api/predict', (req, res) => {
 app.post('/api/upload', (req, res) => {
   handleUpload(req, res, (filePath, response) => {
     SGFParser(filePath)
-      .then(parsedGame => { response.send(JSON.stringify(parsedGame)) })
+      .then(parsedGame => response.send(JSON.stringify(parsedGame)))
       .catch(error => response.send(JSON.stringify({ error })))
   })
 })
