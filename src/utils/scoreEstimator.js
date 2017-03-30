@@ -1,7 +1,7 @@
 const convnetjs = require('convnetjs')
 
 const learn = ({ trainer, net, data, labels }) => {
-  for(let j = 0; j < 2000; j++){
+  for(let j = 0; j < 3000; j++){
     labels.map((label, i) => {
       const x = createVol(data[i])
 
@@ -82,11 +82,11 @@ const scoreEstimator = board => {
     group.map((player, x) => {
       const predictValue = predict(net, [x, y])
 
-      if (!prediction[x]) {
-        prediction[x] = []
+      if (!prediction[y]) {
+        prediction[y] = []
       }
 
-      prediction[x][y] = predictValue
+      prediction[y][x] = predictValue
     })
   })
 
