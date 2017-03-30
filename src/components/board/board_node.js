@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import _ from 'lodash'
 
-import { calculateLiberties, checkVicinity, getLibertyCoordinates, belongsToGroup } from '../utils/helpers'
+import { calculateLiberties, checkVicinity, getLibertyCoordinates, belongsToGroup } from '../../utils/helpers'
 
 class BoardNode extends Component {
   constructor(props) {
@@ -19,6 +19,7 @@ class BoardNode extends Component {
     }
 
     this.state = {
+      type: props.type,
       x: props.x,
       y: props.y,
       owner: props.owner,
@@ -39,7 +40,7 @@ class BoardNode extends Component {
   }
 
   handleOnClick() {
-    if (this.state.owner || this.checkIllegalMove()) {
+    if (this.state.type === "prediction" || this.state.owner || this.checkIllegalMove()) {
       return null
     }
 
@@ -58,9 +59,20 @@ class BoardNode extends Component {
   }
 
   componentWillReceiveProps({ owner }) {
-    let style = this.state.style
+    let style = { ...this.state.style }
 
-    if (!owner) {
+    owner = Math.round(owner)
+
+    switch(owner) {
+    case 2:
+      style.backgroundColor = "#fff"
+      style.borderRadius = "50%"
+      break
+    case 1:
+      style.backgroundColor = "#000"
+      style.borderRadius = "50%"
+      break
+    default:
       style = {
         width: "60px",
         height: "60px",
@@ -77,6 +89,8 @@ class BoardNode extends Component {
   }
 
   handleMouseOut() {
+    if (this.state.type === "prediction") return
+
     const previousStyle = this.state.style
 
     let backgroundColor = this.state.style.backgroundColor
@@ -95,6 +109,8 @@ class BoardNode extends Component {
   }
 
   handleMouseOver() {
+    if (this.state.type === "prediction") return
+
     const previousStyle = this.state.style
 
     if (!this.state.owner && this.checkIllegalMove()) {
