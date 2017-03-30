@@ -1,4 +1,4 @@
-import React, { Children, Component } from 'react'
+import React, { Component } from 'react'
 
 import BoardNode from './board_node'
 
