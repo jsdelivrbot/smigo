@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { Button, Modal } from 'antd'
+import { Button, Modal, Row, Col } from 'antd'
 import Board from './board/board'
 
 class BoardPrediction extends Component {
@@ -39,16 +39,24 @@ class BoardPrediction extends Component {
 
   render() {
     return (
-      <div>
-        <Button onClick={this.handlePrediction}>
-          Predict
-        </Button>
-        <Board
-          type={"prediction"}
-          onClick={() => {}}
-          onCheckTurn={() => {}}
-          board={this.state.prediction}
-        />
+      <div style={{ textAlign: "center", marginTop: "40px" }}>
+        <Row>
+          <Col span={24}>
+            <Button onClick={this.handlePrediction} style={{ marginLeft: "-25px" }}>
+              Predict
+            </Button>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24} offset={1}>
+            <Board
+              type={"prediction"}
+              onClick={() => {}}
+              onCheckTurn={() => {}}
+              board={this.state.prediction}
+            />
+          </Col>
+        </Row>
       </div>
     )
   }

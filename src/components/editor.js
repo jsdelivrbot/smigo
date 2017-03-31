@@ -10,21 +10,21 @@ class Editor extends Component {
     super(props)
 
     this.state = {
-      match: null,
-      index: null,
       board: null,
+      index: null,
+      match: null,
     }
 
-    this.handleUploaderOnChange = this.handleUploaderOnChange.bind(this)
-    this.renderInfo = this.renderInfo.bind(this)
-    this.renderBoard = this.renderBoard.bind(this)
-    this.handleForward = this.handleForward.bind(this)
-    this.handleFastForward = this.handleFastForward.bind(this)
     this.handleBackward = this.handleBackward.bind(this)
     this.handleFastBackward = this.handleFastBackward.bind(this)
+    this.handleFastForward = this.handleFastForward.bind(this)
+    this.handleForward = this.handleForward.bind(this)
+    this.handleUploaderOnChange = this.handleUploaderOnChange.bind(this)
     this.parseMove = this.parseMove.bind(this)
-    this.updateBoard = this.updateBoard.bind(this)
+    this.renderBoard = this.renderBoard.bind(this)
     this.renderFastForward = this.renderFastForward.bind(this)
+    this.renderInfo = this.renderInfo.bind(this)
+    this.updateBoard = this.updateBoard.bind(this)
   }
 
   handleUploaderOnChange(info) {

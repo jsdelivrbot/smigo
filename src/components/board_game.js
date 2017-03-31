@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
+import { Row, Col } from 'antd'
 
 import { placeStoneOnBoard } from '../actions/index'
 import Board from './board/board'
@@ -35,12 +36,16 @@ class BoardGame extends Component {
     }
 
     return (
-      <Board
-        type={"game"}
-        onClick={this.handleOnClick}
-        onCheckTurn={this.handleCheckTurn}
-        board={this.props.board.board}
-      />
+      <Row>
+        <Col span={24} offset={1}>
+          <Board
+            type={"game"}
+            onClick={this.handleOnClick}
+            onCheckTurn={this.handleCheckTurn}
+            board={this.props.board.board}
+          />
+        </Col>
+      </Row>
     )
   }
 }
