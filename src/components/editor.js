@@ -10,11 +10,20 @@ class Editor extends Component {
     super(props)
 
     this.state = {
+      autoplay: false,
+      autoplayIcon: "caret-right",
+      autoplayId: null,
       board: null,
+      disabled: {
+        backwards: true,
+        forwards: false,
+      },
       index: null,
       match: null,
     }
 
+    this.cancelAutoplay = this.cancelAutoplay.bind(this)
+    this.handleAutoPlay = this.handleAutoPlay.bind(this)
     this.handleBackward = this.handleBackward.bind(this)
     this.handleFastBackward = this.handleFastBackward.bind(this)
     this.handleFastForward = this.handleFastForward.bind(this)
@@ -110,11 +119,6 @@ class Editor extends Component {
   renderControls(state) {
     const style = { margin: "10px" }
 
-    const disabled = {
-      backwards: state.index === null ? true : false,
-      forwards: ((state.index + 1) === state.match.moves.length) ? true : false,
-    }
-
     return (
       <Row style={{ marginTop: "20px" }}>
         <Col span={12} offset={6}>
@@ -123,23 +127,30 @@ class Editor extends Component {
             icon="fast-backward"
             size="large"
             style={style}
-            disabled={disabled.backwards}
+            disabled={state.disabled.backwards}
             onClick={this.handleFastBackward}
           />
           <Button
             shape="circle"
-            icon="caret-left"
+            icon="step-backward"
             size="large"
             style={style}
-            disabled={disabled.backwards}
+            disabled={state.disabled.backwards}
             onClick={this.handleBackward}
           />
           <Button
             shape="circle"
-            icon="caret-right"
+            icon={state.autoplayIcon}
             size="large"
             style={style}
-            disabled={disabled.forwards}
+            onClick={this.handleAutoPlay}
+          />
+          <Button
+            shape="circle"
+            icon="step-forward"
+            size="large"
+            style={style}
+            disabled={state.disabled.forwards}
             onClick={this.handleForward}
           />
           <Button
@@ -147,12 +158,44 @@ class Editor extends Component {
             icon="fast-forward"
             size="large"
             style={style}
-            disabled={disabled.forwards}
+            disabled={state.disabled.forwards}
             onClick={this.handleFastForward}
           />
         </Col>
       </Row>
     )
+  }
+
+  cancelAutoplay() {
+    this.setState({ autoplay: false, autoplayIcon: "caret-right" }, clearInterval(this.state.autoplayId))
+  }
+
+  handleAutoPlay() {
+    if (!this.state.autoplay) {
+      const callback = () => {
+        const autoplayId = setInterval(() => {
+          if (this.state.index === this.state.match.moves.length - 1) {
+            this.cancelAutoplay()
+          }
+
+          const nextIndex = this.handleForward(null, this.state)
+
+          if (nextIndex === false) {
+            this.cancelAutoplay()
+          }
+          else {
+            this.setState({ index: nextIndex })
+          }
+        }, 1000)
+
+        this.setState({ autoplayId })
+      }
+
+      this.setState({ autoplayIcon: "pause", autoplay: true }, callback)
+    }
+    else {
+      this.cancelAutoplay()
+    }
   }
 
   handleForward(event, state = null) {
@@ -172,7 +215,7 @@ class Editor extends Component {
   handleFastBackward() {
     const { size } = this.state.match
     const board = generateBoard(Number(size))
-    this.setState({ board, index: null })
+    this.setState({ board, index: null, disabled: { backwards: true, forwards: false } })
   }
 
   handleFastForward() {
@@ -227,7 +270,12 @@ class Editor extends Component {
       index = index === 0 ? null : index - 1
     }
 
-    this.setState({ board, index })
+    const disabled = {
+      backwards: index === null ? true : false,
+      forwards: ((index + 1) === state.match.moves.length) ? true : false,
+    }
+
+    this.setState({ board, index, disabled })
     return index
   }
 
