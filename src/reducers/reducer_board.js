@@ -13,9 +13,8 @@ import {
   iterateGroups,
   playerGroupLiberties,
   reduceOpponentLibertyGroups,
+  generateBoard,
 } from '../utils/helpers'
-
-const generateBoard = size => Array(size).fill().map(() => Array(size).fill(0))
 
 const INITIAL_STATE = {
   board: generateBoard(9),

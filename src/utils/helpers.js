@@ -175,3 +175,5 @@ export const reduceOpponentLibertyGroups = (state, action) => {
 
   return [libertyGroups, capturedPrisoners, board]
 }
+
+export const generateBoard = size => Array(size).fill().map(() => Array(size).fill(0))
