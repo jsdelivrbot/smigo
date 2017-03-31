@@ -40,7 +40,7 @@ class BoardNode extends Component {
   }
 
   handleOnClick() {
-    if (this.state.type === "prediction" || this.state.owner || this.checkIllegalMove()) {
+    if (this.state.type !== "game" || this.state.owner || this.checkIllegalMove()) {
       return null
     }
 
@@ -89,7 +89,7 @@ class BoardNode extends Component {
   }
 
   handleMouseOut() {
-    if (this.state.type === "prediction") return
+    if (this.state.type !== "game") return
 
     const previousStyle = this.state.style
 
@@ -109,7 +109,7 @@ class BoardNode extends Component {
   }
 
   handleMouseOver() {
-    if (this.state.type === "prediction") return
+    if (this.state.type !== "game") return
 
     const previousStyle = this.state.style
 
