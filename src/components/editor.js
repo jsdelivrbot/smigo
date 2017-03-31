@@ -163,7 +163,7 @@ class Editor extends Component {
 
     if (nextIndex === match.moves.length) {
       this.renderControls(state)
-      return
+      return false
     }
 
     return this.updateBoard(state, nextIndex)
@@ -185,8 +185,10 @@ class Editor extends Component {
     moves.map((val, index) => {
       const nextIndex = callback(null, state)
 
-      state.index = nextIndex
+      state.index = nextIndex === false ? state.index : nextIndex
     })
+
+    this.setState({ index: state.index })
   }
 
   handleBackward() {
