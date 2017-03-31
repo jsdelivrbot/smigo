@@ -167,18 +167,12 @@ class Editor extends Component {
   }
 
   cancelAutoplay() {
-    this.setState({ autoplay: false, autoplayIcon: "caret-right" })
-    clearInterval(this.state.autoplayId)
+    this.setState({ autoplay: false, autoplayIcon: "caret-right" }, clearInterval(this.state.autoplayId))
   }
 
   handleAutoPlay() {
-    const autoplay = !this.state.autoplay
-    const autoplayIcon = autoplay ? "pause" :  "caret-right"
-
-    let callback = () => {}
-
-    if (autoplay) {
-      callback = () => {
+    if (!this.state.autoplay) {
+      const callback = () => {
         const autoplayId = setInterval(() => {
           if (this.state.index === this.state.match.moves.length - 1) {
             this.cancelAutoplay()
@@ -196,12 +190,12 @@ class Editor extends Component {
 
         this.setState({ autoplayId })
       }
+
+      this.setState({ autoplayIcon: "pause", autoplay: true }, callback)
     }
     else {
       this.cancelAutoplay()
     }
-
-    this.setState({ autoplayIcon, autoplay }, callback)
   }
 
   handleForward(event, state = null) {
