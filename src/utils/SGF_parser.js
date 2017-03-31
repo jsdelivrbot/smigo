@@ -1,9 +1,13 @@
 const fs = require('fs')
 
 const defaultValues = {
-  size: null,
   event: null,
-  round: null,
+  date: null,
+  handicap: null,
+  komi: null,
+  moves: null,
+  overtime: null,
+  place: null,
   player1: {
     name: null,
     rank: null,
@@ -12,51 +16,59 @@ const defaultValues = {
     name: null,
     rank: null,
   },
-  komi: null,
-  date: null,
-  place: null,
   result: null,
+  round: null,
+  rules: null,
+  size: null,
   source: null,
-  moves: null,
 }
 
 const mapKeys = (key, value, obj) => {
   switch(key) {
-  case 'SZ':
-    obj.size = value
-    break
-  case 'EV':
-    obj.event = value
-    break
-  case 'RO':
-    obj.round = value
-    break
-  case 'PB':
-    obj.player1.name = value
-    break
   case 'BR':
     obj.player1.rank = value
-    break
-  case 'PW':
-    obj.player2.name = value
-    break
-  case 'WR':
-    obj.player2.rank = value
-    break
-  case 'KM':
-    obj.komi = value
     break
   case 'DT':
     obj.date = value
     break
+  case 'EV':
+    obj.event = value
+    break
+  case 'HA':
+    obj.handicap = value
+    break
+  case 'KM':
+    obj.komi = value
+    break
+  case 'OT':
+    obj.overtime = value
+    break
+  case 'PB':
+    obj.player1.name = value
+    break
   case 'PC':
     obj.place = value
+    break
+  case 'PW':
+    obj.player2.name = value
     break
   case 'RE':
     obj.result = value
     break
+  case 'RO':
+    obj.round = value
+    break
+  case 'RU':
+    obj.rules = value
+    break
   case 'SO':
     obj.source = value
+    break
+  case 'SZ':
+    obj.size = value
+    break
+  case 'WR':
+    obj.player2.rank = value
     break
   }
 

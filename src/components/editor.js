@@ -77,7 +77,9 @@ class Editor extends Component {
             <p>{this.state.match.source}</p>
           </Col>
         </Row>
+
         <hr style={{ marginTop: "10px", marginBottom: "10px" }}/>
+
         <Row gutter={16} style={{ marginTop: "10px" }}>
           <Col className="gutter-row" span="6">
             <h6 style={{ fontSize: "12px" }}>Result</h6>
@@ -94,6 +96,25 @@ class Editor extends Component {
           <Col className="gutter-row" span="6">
             <h6 style={{ fontSize: "12px" }}>Boardsize</h6>
             <p>{size}x{size}</p>
+          </Col>
+        </Row>
+
+        <hr style={{ marginTop: "10px", marginBottom: "10px" }}/>
+
+        <Row gutter={16} style={{ marginTop: "10px" }}>
+          <Col className="gutter-row" span="6">
+            <h6 style={{ fontSize: "12px" }}>Rules</h6>
+            <p>{this.state.match.rules}</p>
+          </Col>
+          <Col className="gutter-row" span="6">
+            <h6 style={{ fontSize: "12px" }}>Overtime</h6>
+            <p>{this.state.match.overtime}</p>
+          </Col>
+          <Col className="gutter-row" span="6">
+            <h6 style={{ fontSize: "12px" }}>Handicap</h6>
+            <p>{this.state.match.handicap}</p>
+          </Col>
+          <Col className="gutter-row" span="6">
           </Col>
         </Row>
       </Card>
