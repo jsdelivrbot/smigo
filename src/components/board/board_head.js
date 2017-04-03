@@ -1,12 +1,24 @@
-import React, { Children } from 'react'
+import React, { Children, Component } from 'react'
 
-const BoardHead = ({ children }) => (
-  <thead>
-    <tr>
-      <th></th>
-      {Children.map(children, (x, i) => <th key={`th${i}`}>{i}</th>)}
-    </tr>
-  </thead>
-)
+class BoardHead extends Component {
+  constructor(props) {
+    super(props)
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return false
+  }
+
+  render() {
+    return (
+      <thead>
+        <tr>
+          <th></th>
+          {Children.map(this.props.children, (x, i) => <th key={`th${i}`}>{i}</th>)}
+        </tr>
+      </thead>
+    )
+  }
+}
 
 export default BoardHead
