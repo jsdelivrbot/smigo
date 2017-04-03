@@ -31,6 +31,8 @@ class Info extends Component {
     this.state = {
       match: props.match,
     }
+
+    this.renderTitle = this.renderTitle.bind(this)
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -60,15 +62,19 @@ class Info extends Component {
     )
   }
 
-  render() {
-    const { player1, player2, size } = this.state.match
+  renderTitle() {
+    const { player1, player2 } = this.state.match
+
     const player1Title = player1.rank ? `${player1.name} ${player1.rank}` : player1.name
     const player2Title = player2.rank ? `${player2.name} ${player2.rank}` : player2.name
-    const title = `${player1Title} vs ${player2Title}`
 
+    return `${player1Title} vs ${player2Title}`
+  }
+
+  render() {
     return (
       <Collapse>
-        <Panel header={title}>
+        <Panel header={this.renderTitle()}>
           <Card>
             {rows.map((row, i) => this.renderRow(row, i))}
           </Card>
