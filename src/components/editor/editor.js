@@ -31,6 +31,7 @@ class Editor extends Component {
     this.handleFastForward = this.handleFastForward.bind(this)
     this.handleForward = this.handleForward.bind(this)
     this.handleUploaderOnChange = this.handleUploaderOnChange.bind(this)
+    this.moveNumber = this.moveNumber.bind(this)
     this.parseMove = this.parseMove.bind(this)
     this.renderBoard = this.renderBoard.bind(this)
     this.renderFastForward = this.renderFastForward.bind(this)
@@ -54,7 +55,7 @@ class Editor extends Component {
 
   renderBoard(state) {
     return (
-      <div style={{ display: "inline-block", marginTop: "40px", width: "100%" }}>
+      <div style={{ display: "inline-block", marginTop: "20px", width: "100%" }}>
         <div style={{ display: "inline-block", marginLeft: "-60px" }}>
           <Board
             type={"editor"}
@@ -207,12 +208,30 @@ class Editor extends Component {
     return board
   }
 
+  moveNumber() {
+    const move = this.state.index === null ? 0 : this.state.match.moves.slice(0, this.state.index).length + 1
+
+    const style = {
+      marginTop: "20px",
+      fontSize: "14px",
+    }
+
+    return (
+      <Row style={style}>
+        <Col span={24}>
+          Move {move}
+        </Col>
+      </Row>
+    )
+  }
+
   render() {
     if (!this.state.match) return <Uploader onChange={this.handleUploaderOnChange} />
 
     return (
       <div style={{ textAlign: "center" }}>
         <Info match={this.state.match} />
+        {this.moveNumber()}
         {this.renderBoard(this.state)}
       </div>
     )
