@@ -6,7 +6,7 @@ const { Header, Content, Footer } = Layout
 
 import Home from './home'
 import Game from './game'
-import Editor from './editor'
+import Editor from './editor/editor'
 
 class App extends Component {
   constructor(props) {
