@@ -1,5 +1,28 @@
 import React, { Component } from 'react'
-import { Card, Row, Col } from 'antd'
+import { Card, Row, Col, Collapse } from 'antd'
+
+const Panel = Collapse.Panel
+
+const rows = [
+  [
+    { key: "date", title: "Date" },
+    { key: "event", title: "Event" },
+    { key: "place", title: "Place" },
+    { key: "source", title: "Source" },
+  ],
+  [
+    { key: "result", title: "Result" },
+    { key: "round", title: "Round" },
+    { key: "komi", title: "Komi" },
+    { key: "size", title: "Boardsize" },
+  ],
+  [
+    { key: "rules", title: "Rules" },
+    { key: "overtime", title: "Overtime" },
+    { key: "handicap", title: "Handicap" },
+    {},
+  ],
+]
 
 class Info extends Component {
   constructor(props) {
@@ -14,6 +37,29 @@ class Info extends Component {
     return false
   }
 
+  renderRow(row, i) {
+    return (
+      <div key={`div-${i}`}>
+        <Row gutter={16} key={i}>
+          {row.map((obj, index) => {
+            if (obj.length === 0) {
+              return <Col className="gutter-row" span="6" key={`${i}-${index}`}></Col>
+            }
+
+            return (
+              <Col className="gutter-row" span="6" key={`${i}-${index}`}>
+                <h6 style={{ fontSize: "12px" }}>{obj.title}</h6>
+                <p>{this.state.match[obj.key]}</p>
+              </Col>
+            )
+          })}
+        </Row>
+
+        <hr style={{ marginTop: "10px", marginBottom: "10px" }}/>
+      </div>
+    )
+  }
+
   render() {
     const { player1, player2, size } = this.state.match
     const player1Title = player1.rank ? `${player1.name} ${player1.rank}` : player1.name
@@ -21,66 +67,13 @@ class Info extends Component {
     const title = `${player1Title} vs ${player2Title}`
 
     return (
-      <Card title={title}>
-        <Row gutter={16}>
-          <Col className="gutter-row" span="6">
-            <h6 style={{ fontSize: "12px" }}>Date</h6>
-            <p>{this.state.match.date}</p>
-          </Col>
-          <Col className="gutter-row" span="6">
-            <h6 style={{ fontSize: "12px" }}>Event</h6>
-            <p>{this.state.match.event}</p>
-          </Col>
-          <Col className="gutter-row" span="6">
-            <h6 style={{ fontSize: "12px" }}>Place</h6>
-            <p>{this.state.match.place}</p>
-          </Col>
-          <Col className="gutter-row" span="6">
-            <h6 style={{ fontSize: "12px" }}>Source</h6>
-            <p>{this.state.match.source}</p>
-          </Col>
-        </Row>
-
-        <hr style={{ marginTop: "10px", marginBottom: "10px" }}/>
-
-        <Row gutter={16} style={{ marginTop: "10px" }}>
-          <Col className="gutter-row" span="6">
-            <h6 style={{ fontSize: "12px" }}>Result</h6>
-            <p>{this.state.match.result}</p>
-          </Col>
-          <Col className="gutter-row" span="6">
-            <h6 style={{ fontSize: "12px" }}>Round</h6>
-            <p>{this.state.match.round}</p>
-          </Col>
-          <Col className="gutter-row" span="6">
-            <h6 style={{ fontSize: "12px" }}>Komi</h6>
-            <p>{this.state.match.komi}</p>
-          </Col>
-          <Col className="gutter-row" span="6">
-            <h6 style={{ fontSize: "12px" }}>Boardsize</h6>
-            <p>{size}x{size}</p>
-          </Col>
-        </Row>
-
-        <hr style={{ marginTop: "10px", marginBottom: "10px" }}/>
-
-        <Row gutter={16} style={{ marginTop: "10px" }}>
-          <Col className="gutter-row" span="6">
-            <h6 style={{ fontSize: "12px" }}>Rules</h6>
-            <p>{this.state.match.rules}</p>
-          </Col>
-          <Col className="gutter-row" span="6">
-            <h6 style={{ fontSize: "12px" }}>Overtime</h6>
-            <p>{this.state.match.overtime}</p>
-          </Col>
-          <Col className="gutter-row" span="6">
-            <h6 style={{ fontSize: "12px" }}>Handicap</h6>
-            <p>{this.state.match.handicap}</p>
-          </Col>
-          <Col className="gutter-row" span="6">
-          </Col>
-        </Row>
-      </Card>
+      <Collapse>
+        <Panel header={title}>
+          <Card>
+            {rows.map((row, i) => this.renderRow(row, i))}
+          </Card>
+        </Panel>
+      </Collapse>
     )
   }
 }
