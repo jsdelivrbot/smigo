@@ -6,6 +6,7 @@ mongoose.Promise = require('bluebird')
 const UserSchema = new Schema({
   username: String,
   password: String,
+  name: String,
 })
 
 module.exports = mongoose.model('User', UserSchema)
