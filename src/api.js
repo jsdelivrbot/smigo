@@ -1,8 +1,6 @@
 export const authorize = (username, password) => {
   const url = `http://${window.location.hostname}:8081/api/login`
 
-  console.log('authorize username and password', username, password)
-
   return fetch(url, {
     method: 'POST',
     headers: {
