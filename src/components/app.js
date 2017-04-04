@@ -7,7 +7,7 @@ const { Header, Content, Footer } = Layout
 import Home from './home'
 import Game from './game'
 import Editor from './editor/editor'
-import { LoginForm } from './login'
+import LoginForm from './login'
 
 class App extends Component {
   constructor(props) {
