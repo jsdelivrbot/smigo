@@ -27,3 +27,13 @@ th {
   border: 0 !important;
   text-align: center !important;
 }
+
+.login-form {
+  min-width: 300px;
+}
+.login-form-forgot {
+  float: right;
+}
+.login-form-button {
+  width: 100%;
+}
