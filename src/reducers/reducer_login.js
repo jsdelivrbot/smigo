@@ -9,8 +9,6 @@ export default function(state = INITIAL_STATE, action) {
   case LOGIN_SUCCESS:
     const user = action.payload.user
 
-    console.log('reducer login success', action)
-
     return { ...state, user }
   }
 
