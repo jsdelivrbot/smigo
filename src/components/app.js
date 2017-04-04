@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
 import { Route, NavLink, Link, Switch } from 'react-router-dom'
 import { Layout, Menu } from 'antd'
 
