@@ -25,8 +25,8 @@ class Game extends Component {
   }
 }
 
-function mapStateToProps(state) {
-  return { game: state.game }
+function mapStateToProps({ game }) {
+  return { game }
 }
 
 export default connect(mapStateToProps)(Game)

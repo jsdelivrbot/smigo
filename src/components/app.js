@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import { Route, NavLink, Switch } from 'react-router-dom'
+import { connect } from 'react-redux'
+import { Route, NavLink, Link, Switch } from 'react-router-dom'
 import { Layout, Menu } from 'antd'
 
 const { Header, Content, Footer } = Layout
@@ -7,7 +8,7 @@ const { Header, Content, Footer } = Layout
 import Home from './home'
 import Game from './game'
 import Editor from './editor/editor'
-import { LoginForm } from './login'
+import LoginForm from './login'
 
 class App extends Component {
   constructor(props) {

@@ -1,11 +1,27 @@
 import {
-  UPDATE_TURN,
-  UPDATE_BOARD,
-  DETECT_AND_MERGE_GROUPS,
-  COUNT_LIBERTIES,
   CAPTURE_GROUPS,
+  COUNT_LIBERTIES,
+  DETECT_AND_MERGE_GROUPS,
+  LOGIN_REQUEST,
+  LOGIN_SUCCESS,
   PLACE_STONE_ON_BOARD,
+  UPDATE_BOARD,
+  UPDATE_TURN,
 } from './types'
+
+export function login_request(username, password) {
+  return {
+    type: LOGIN_REQUEST,
+    payload: { username, password }
+  }
+}
+
+export function login_success(user) {
+  return {
+    type: LOGIN_SUCCESS,
+    payload: { user }
+  }
+}
 
 export function placeStoneOnBoard(x, y, player) {
   return {
