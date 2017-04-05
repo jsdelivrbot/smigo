@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Route, NavLink, Switch } from 'react-router-dom'
+import { connect } from 'react-redux'
 import { Layout, Menu } from 'antd'
 
 const { Header, Content, Footer } = Layout
@@ -61,4 +62,8 @@ const NoMatch = ({ location }) => (
   </div>
 )
 
-export default App
+function mapStateToProps({ login }) {
+  return { login }
+}
+
+export default connect(mapStateToProps)(App)
