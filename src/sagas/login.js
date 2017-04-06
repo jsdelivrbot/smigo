@@ -18,6 +18,7 @@ function* login() {
       yield cancel(task)
     }
 
+    console.log('foo', action)
     // yield call(Api.clearItem, 'token')
   }
 }

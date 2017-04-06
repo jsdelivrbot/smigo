@@ -4,6 +4,7 @@ import {
   DETECT_AND_MERGE_GROUPS,
   LOGIN_REQUEST,
   LOGIN_SUCCESS,
+  LOGOUT,
   PLACE_STONE_ON_BOARD,
   UPDATE_BOARD,
   UPDATE_TURN,
@@ -20,6 +21,13 @@ export function login_success(user) {
   return {
     type: LOGIN_SUCCESS,
     payload: { user }
+  }
+}
+
+export function logout(id) {
+  return {
+    type: LOGOUT,
+    payload: { id }
   }
 }
 
