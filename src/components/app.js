@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
-import { Route, NavLink, Switch } from 'react-router-dom'
-import { connect } from 'react-redux'
-import { Layout, Menu } from 'antd'
+import { Route, Switch } from 'react-router-dom'
+import { Layout } from 'antd'
 
-const { Header, Content, Footer } = Layout
+const { Content, Footer } = Layout
 
+import NavBar from './nav_bar'
 import Home from './home'
 import Game from './game'
 import Editor from './editor/editor'
@@ -13,30 +13,12 @@ import LoginForm from './login'
 class App extends Component {
   constructor(props) {
     super(props)
-
-    this.state = {
-      selected: 1
-    }
   }
 
   render() {
     return (
       <Layout className="layout" style={{ width: '100%' }}>
-        <Header>
-          <div className="logo" />
-          <Menu
-            theme="dark"
-            mode="horizontal"
-            defaultSelectedKeys={[`${this.state.selected}`]}
-            style={{ lineHeight: '64px' }}
-            onClick={e => { this.setState({ selected: e.key })}}
-          >
-            <Menu.Item key="1"><NavLink to="/">Home</NavLink></Menu.Item>
-            <Menu.Item key="2"><NavLink to="/game">Game</NavLink></Menu.Item>
-            <Menu.Item key="3"><NavLink to="/editor">Editor</NavLink></Menu.Item>
-            <Menu.Item key="99" style={{ float: "right" }}><NavLink to="/login">Login</NavLink></Menu.Item>
-          </Menu>
-        </Header>
+        <NavBar />
         <Content style={{ padding: '0 50px' }}>
           <div style={{ background: '#fff', padding: 24, minHeight: 280 }}>
             <Switch>
@@ -62,8 +44,4 @@ const NoMatch = ({ location }) => (
   </div>
 )
 
-function mapStateToProps({ login }) {
-  return { login }
-}
-
-export default connect(mapStateToProps)(App)
+export default App
