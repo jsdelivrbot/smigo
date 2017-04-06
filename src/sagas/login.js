@@ -1,6 +1,6 @@
 import { take, fork, cancel, call, put, cancelled } from 'redux-saga/effects'
 
-import { login_success, logout } from '../actions/index'
+import { login_success } from '../actions/index'
 import { LOGIN_REQUEST, LOGIN_ERROR, LOGOUT } from '../actions/types'
 import * as Api from '../api'
 
