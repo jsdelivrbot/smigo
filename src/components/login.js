@@ -7,6 +7,7 @@ import { Form, Icon, Input, Button, Checkbox, Row, Col, message } from 'antd'
 const FormItem = Form.Item
 
 import { login_request } from '../actions/index'
+import { getUserInfo } from '../selectors/login_selector'
 
 class Login extends Component {
   constructor(props) {
@@ -29,8 +30,8 @@ class Login extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.login.user !== null && nextProps.login.user._id) {
-      this.setState({ redirect: true }, message.success(`Welcome, ${nextProps.login.user.name}`))
+    if (nextProps.user !== null && nextProps.user._id) {
+      this.setState({ redirect: true }, message.success(`Welcome, ${nextProps.user.name}`))
     }
   }
 
@@ -82,8 +83,10 @@ class Login extends Component {
 
 const LoginForm = Form.create()(Login)
 
-function mapStateToProps({ login }) {
-  return { login }
+function mapStateToProps(state) {
+  return {
+    user: getUserInfo(state)
+  }
 }
 
 function mapDispatchToProps(dispatch) {
