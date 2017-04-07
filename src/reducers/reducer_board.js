@@ -35,7 +35,6 @@ const INITIAL_STATE = {
 export default function(state = INITIAL_STATE, action) {
   switch(action.type) {
   case UPDATE_BOARD:
-    console.log('update board action', action)
     return {
       ...state,
       board: updateBoard(action.payload, state)

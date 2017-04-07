@@ -11,16 +11,10 @@ export const getBoard = state => state.board
 
 export const getBoardLayout = createDeepEqualSelector(
   [getBoard],
-  (board) => {
-    console.log('getBoardLayout called', board)
-    return board.board
-  }
+  board => board.board
 )
 
 export const getGroups = createDeepEqualSelector(
   [getBoard],
-  (board) => {
-    console.log('getGroups called')
-    return board.groups
-  }
+  board => board.groups
 )

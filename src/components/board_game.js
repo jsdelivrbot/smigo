@@ -19,19 +19,16 @@ class BoardGame extends Component {
   }
 
   handleOnClick(x, y) {
-    console.log('handleOnClick called')
     this.props.placeStoneOnBoard(x, y, this.props.whosTurn)
 
     return this.props.whosTurn
   }
 
   handleCheckTurn() {
-    console.log('handleCheckTurn called')
     return this.props.whosTurn
   }
 
   render() {
-    console.log('render called')
     const style = {
       backgroundColor: "#CC9966",
     }
