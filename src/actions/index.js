@@ -24,10 +24,10 @@ export function login_success(user) {
   }
 }
 
-export function logout(id) {
+export function logout(token) {
   return {
     type: LOGOUT,
-    payload: { id }
+    payload: { token }
   }
 }
 

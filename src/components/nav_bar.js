@@ -24,9 +24,9 @@ class NavBar extends Component {
   handleLogout(e) {
     e.preventDefault()
 
-    const id = this.props.user._id
+    const { token } = this.props.user
 
-    this.props.logout(id)
+    this.props.logout(token)
   }
 
   renderLogin() {

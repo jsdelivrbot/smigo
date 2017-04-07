@@ -30,7 +30,7 @@ class Login extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.user !== null && nextProps.user._id) {
+    if (nextProps.user !== null && nextProps.user.token) {
       this.setState({ redirect: true }, message.success(`Welcome, ${nextProps.user.name}`))
     }
   }

@@ -27,7 +27,10 @@ const route_login = (req, res) => {
       return false
     }
 
-    const user = collection[0]
+    const user = {
+      name: collection[0].name,
+      token: collection[0]._id
+    }
 
     res.json({ success: true, error: false, user })
   })
