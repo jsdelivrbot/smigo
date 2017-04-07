@@ -30,7 +30,9 @@ class NavBar extends Component {
   }
 
   renderLogin() {
-    if (this.props.user === null) return <NavLink to="/login"><Button size="small" icon="login">Login</Button></NavLink>
+    if (this.props.user === null) {
+      return <NavLink to="/login"><Button size="small" icon="login">Login</Button></NavLink>
+    }
 
     return (
       <div>
