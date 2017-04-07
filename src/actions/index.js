@@ -1,9 +1,11 @@
 import {
   CAPTURE_GROUPS,
+  CLEAR_ERRORS,
   COUNT_LIBERTIES,
   DETECT_AND_MERGE_GROUPS,
   LOGIN_REQUEST,
   LOGIN_SUCCESS,
+  LOGIN_ERROR,
   LOGOUT,
   PLACE_STONE_ON_BOARD,
   UPDATE_BOARD,
@@ -24,10 +26,24 @@ export function login_success(user) {
   }
 }
 
+export function login_error(error) {
+  return {
+    type: LOGIN_ERROR,
+    payload: { error }
+  }
+}
+
 export function logout(token) {
   return {
     type: LOGOUT,
     payload: { token }
+  }
+}
+
+export function clear_errors() {
+  return {
+    type: CLEAR_ERRORS,
+    payload: { }
   }
 }
 

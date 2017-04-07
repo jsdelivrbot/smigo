@@ -14,13 +14,13 @@ export const authorize = (username, password) => {
       const { success, error, user } = response
 
       if (error) {
-        throw new Error('error in login')
+        throw new Error(error)
 
         return false
       }
 
       if (!success) {
-        throw new Error('cannot find user')
+        throw new Error('Cannot find user')
 
         return false
       }

@@ -3,19 +3,22 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { Redirect } from 'react-router-dom'
 
-import { Form, Icon, Input, Button, Checkbox, Row, Col, message } from 'antd'
+import { Form, Icon, Input, Button, Checkbox, Row, Col, message, Alert } from 'antd'
 const FormItem = Form.Item
 
-import { login_request } from '../actions/index'
-import { getUserInfo } from '../selectors/login_selector'
+import { login_request, clear_errors } from '../actions/index'
+import { getUserInfo, getLoginError } from '../selectors/login_selector'
 
 class Login extends Component {
   constructor(props) {
     super(props)
 
-    this.state = { redirect: false }
+    this.state = {
+      redirect: false,
+    }
 
     this.handleSubmit = this.handleSubmit.bind(this)
+    this.onCloseClick = this.onCloseClick.bind(this)
   }
 
   handleSubmit = (e) => {
@@ -35,14 +38,35 @@ class Login extends Component {
     }
   }
 
+  onCloseClick() {
+    this.props.clear_errors()
+  }
+
+  renderError(error) {
+    if (error === null) return <div></div>
+
+    return (
+      <Col span={8} offset={8} style={{ minWidth: "300px" }}>
+        <Alert message="Error in login"
+          description={error.message}
+          type="error"
+          closable
+          onClose={this.onCloseClick}
+        />
+      </Col>
+    )
+  }
+
   render() {
     if (this.state.redirect) {
       return <Redirect to="/" />
     }
 
     const { getFieldDecorator } = this.props.form
+
     return (
       <Row>
+        {this.props.error && this.renderError(this.props.error)}
         <Col span={8} offset={8}>
           <Form onSubmit={this.handleSubmit} className="login-form">
             <FormItem>
@@ -85,12 +109,16 @@ const LoginForm = Form.create()(Login)
 
 function mapStateToProps(state) {
   return {
-    user: getUserInfo(state)
+    user: getUserInfo(state),
+    error: getLoginError(state),
   }
 }
 
 function mapDispatchToProps(dispatch) {
-  const actions = { login_request }
+  const actions = {
+    login_request,
+    clear_errors
+  }
 
   return bindActionCreators(actions, dispatch)
 }

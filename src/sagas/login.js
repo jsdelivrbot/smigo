@@ -1,6 +1,6 @@
 import { take, fork, cancel, call, put, cancelled } from 'redux-saga/effects'
 
-import { login_success } from '../actions/index'
+import { login_success, login_error } from '../actions/index'
 import { LOGIN_REQUEST, LOGIN_ERROR, LOGOUT } from '../actions/types'
 import * as Api from '../api'
 
@@ -32,7 +32,7 @@ function* authorize(username, password) {
     // return token
   }
   catch(error) {
-    yield put({ type: LOGIN_ERROR, error })
+    yield put(login_error(error))
   }
   finally {
     if (yield cancelled()) {
