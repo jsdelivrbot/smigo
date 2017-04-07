@@ -2,14 +2,16 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import { Button, Modal, Row, Col } from 'antd'
+
 import Board from './board/board'
+import { getBoardLayout } from '../selectors/board_selector'
 
 class BoardPrediction extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      prediction: this.props.board.board,
+      prediction: this.props.board,
     }
 
     this.handlePrediction = this.handlePrediction.bind(this)
@@ -24,7 +26,7 @@ class BoardPrediction extends Component {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
-      body: JSON.stringify({ board: this.props.board.board })
+      body: JSON.stringify({ board: this.props.board })
     })
       .then(response => response.json())
       .then(response => {
@@ -62,8 +64,10 @@ class BoardPrediction extends Component {
   }
 }
 
-function mapStateToProps({ board }) {
-  return { board }
+function mapStateToProps(state) {
+  return {
+    board: getBoardLayout(state)
+  }
 }
 
 export default connect(mapStateToProps)(BoardPrediction)
