@@ -3,6 +3,8 @@ import { connect } from 'react-redux'
 import _ from 'lodash'
 
 import { calculateLiberties, checkVicinity, getLibertyCoordinates, belongsToGroup } from '../../utils/helpers'
+import { getPlayers, getWhosTurn } from '../../selectors/game_selector'
+import { getBoardLayout, getGroups } from '../../selectors/board_selector'
 
 class BoardNode extends Component {
   constructor(props) {
@@ -12,7 +14,7 @@ class BoardNode extends Component {
     let borderRadius = 0
 
     if (props.owner) {
-      const { players: { player1, player2 }} = this.props.game
+      const { player1, player2 } = this.props.players
 
       backgroundColor = props.owner % 2 === 0 ? player2.color : player1.color
       borderRadius = "50%"
@@ -44,7 +46,7 @@ class BoardNode extends Component {
       return null
     }
 
-    const { players: { player1, player2 }} = this.props.game
+    const { player1, player2 } = this.props.players
     const { x, y } = this.state
     const backgroundColor = this.props.onChangeTurn(x, y) % 2 === 0 ? player1.color  : player2.color
 
@@ -125,7 +127,8 @@ class BoardNode extends Component {
       return
     }
 
-    const { whosTurn, players: { player1, player2 }} = this.props.game
+    const whosTurn = this.props.whosTurn
+    const { player1, player2 } = this.props.players
 
     let backgroundColor = whosTurn % 2 ? player1.color : player2.color
 
@@ -185,9 +188,10 @@ class BoardNode extends Component {
   }
 
   checkIllegalMove() {
-    const { board, groups } = this.props.board
+    const board = this.props.board
+    const groups = this.props.groups
+    const player = this.props.whosTurn
     const { x, y } = this.state
-    const { whosTurn: player } = this.props.game
 
     const opponent = player % 2 === 0 ? 1 : 2
 
@@ -237,8 +241,10 @@ class BoardNode extends Component {
 
 function mapStateToProps(state) {
   return {
-    game: state.game,
-    board: state.board,
+    whosTurn: getWhosTurn(state),
+    players: getPlayers(state),
+    board: getBoardLayout(state),
+    groups: getGroups(state),
   }
 }
 

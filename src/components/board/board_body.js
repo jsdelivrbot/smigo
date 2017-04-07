@@ -34,10 +34,6 @@ const renderRow = ({ row, x, onClick, onCheckTurn, type }) => {
 
 
 class BoardBody extends Component {
-  constructor(props) {
-    super(props)
-  }
-
   render() {
     const { onClick, onCheckTurn, type, children } = this.props
 

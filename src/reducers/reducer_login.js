@@ -11,7 +11,6 @@ export default function(state = INITIAL_STATE, action) {
 
     return { ...state, user }
   case LOGOUT:
-    console.log('logout reducer')
     return { ...state, user: null }
   }
 

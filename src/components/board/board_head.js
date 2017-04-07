@@ -1,10 +1,6 @@
 import React, { Children, Component } from 'react'
 
 class BoardHead extends Component {
-  constructor(props) {
-    super(props)
-  }
-
   shouldComponentUpdate(nextProps, nextState) {
     return false
   }

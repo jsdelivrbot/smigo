@@ -4,6 +4,10 @@ import { bindActionCreators } from 'redux'
 import { Row, Col } from 'antd'
 
 import { placeStoneOnBoard } from '../actions/index'
+
+import { getWhosTurn } from '../selectors/game_selector'
+import { getBoardLayout } from '../selectors/board_selector'
+
 import Board from './board/board'
 
 class BoardGame extends Component {
@@ -15,15 +19,13 @@ class BoardGame extends Component {
   }
 
   handleOnClick(x, y) {
-    const { whosTurn } = this.props.game
+    this.props.placeStoneOnBoard(x, y, this.props.whosTurn)
 
-    this.props.placeStoneOnBoard(x, y, whosTurn)
-
-    return whosTurn
+    return this.props.whosTurn
   }
 
   handleCheckTurn() {
-    return this.props.game.whosTurn
+    return this.props.whosTurn
   }
 
   render() {
@@ -42,7 +44,7 @@ class BoardGame extends Component {
             type={"game"}
             onClick={this.handleOnClick}
             onCheckTurn={this.handleCheckTurn}
-            board={this.props.board.board}
+            board={this.props.board}
           />
         </Col>
       </Row>
@@ -50,8 +52,11 @@ class BoardGame extends Component {
   }
 }
 
-function mapStateToProps({ game, board }) {
-  return { game, board }
+function mapStateToProps(state) {
+  return {
+    whosTurn: getWhosTurn(state),
+    board: getBoardLayout(state)
+  }
 }
 
 function mapDispatchToProps(dispatch) {
