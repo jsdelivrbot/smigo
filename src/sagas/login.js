@@ -19,7 +19,7 @@ function* login() {
     }
 
     // returned value in task.result()
-    yield call(Api.clearItem, username)
+    yield call(Api.clearItem, 'token')
   }
 }
 
@@ -35,7 +35,7 @@ function* authorize(username, password) {
       return false
     }
 
-    yield fork(Api.storeItem, username, user.token)
+    yield fork(Api.storeItem, 'token', user.token)
 
     yield put(login_success(user))
 
