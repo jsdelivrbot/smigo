@@ -19,6 +19,7 @@ const routes = require('./api_routes')
 app.post('/api/login', routes.login)
 app.post('/api/predict', routes.predict)
 app.post('/api/upload', routes.upload)
+app.post('/api/save_token', routes.saveToken)
 
 app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, 'index.html'))

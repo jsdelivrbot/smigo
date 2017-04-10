@@ -18,18 +18,28 @@ function* login() {
       yield cancel(task)
     }
 
-    // yield call(Api.clearItem, 'token')
+    // returned value in task.result()
+    yield call(Api.clearItem, username)
   }
 }
 
 function* authorize(username, password) {
   try {
-    // const token = yield call(Api.authorize, username, password)
-    const user = yield call(Api.authorize, username, password)
+    const [user, id] = yield call(Api.authorize, username, password)
+
+    const { response, error } = yield call(Api.saveToken, id, user.token)
+
+    if (error) {
+      throw error
+
+      return false
+    }
+
+    yield fork(Api.storeItem, username, user.token)
 
     yield put(login_success(user))
-    // yield call(Api.storeItem, {token})
-    // return token
+
+    // return id
   }
   catch(error) {
     yield put(login_error(error))
