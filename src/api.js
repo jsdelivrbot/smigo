@@ -65,3 +65,27 @@ export const saveToken = (id, token) => {
       return success
     })
 }
+
+export const getUsers = () => {
+  const url = `http://${window.location.hostname}:8081/api/users`
+
+  return fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+  })
+    .then(response => response.json())
+    .then(response => {
+      const { users, error } = response
+
+      if (error) {
+        throw new Error(error)
+
+        return false
+      }
+
+      return users
+    })
+}

@@ -9,5 +9,7 @@ export const LOGIN_REQUEST = 'LOGIN_REQUEST'
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS'
 export const LOGIN_ERROR = 'LOGIN_ERROR'
 export const LOGOUT = 'LOGOUT'
+export const GET_LOGGED_USERS = 'GET_LOGGED_USERS'
+export const USER_LIST_REQUEST = 'USER_LIST_REQUEST'
 
 export const CLEAR_ERRORS = 'CLEAR_ERRORS'

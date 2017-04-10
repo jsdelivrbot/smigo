@@ -1,10 +1,14 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 
-import { getUserInfo } from '../selectors/login_selector'
+import { getUserInfo, getUserList } from '../selectors/login_selector'
 
-import { Row, Col, Input, Button, Card, Form } from 'antd'
+import { userListRequest } from '../actions/index'
+
+import { Row, Col, Input, Button, Card, Form, Layout } from 'antd'
 const FormItem = Form.Item
+const { Content, Sider } = Layout
 
 // socket.io
 import io from 'socket.io-client'
@@ -24,6 +28,8 @@ class Home extends Component {
     this.state = {
       messages: [],
     }
+
+    this.props.userListRequest()
 
     this.handleSubmit = this.handleSubmit.bind(this)
   }
@@ -64,46 +70,54 @@ class Home extends Component {
   render() {
     const { getFieldDecorator } = this.props.form
 
+    const userList = this.props.userList || []
+
     return (
-      <div>
-        <Row>
-          <Col span={24}>
-            <Card style={{ height: "600px", marginBottom: "20px" }}>
-              {this.state.messages.map((obj, i) => {
-                return (
-                  <Row key={`msg-${i}`}>
-                    <Col span={4}>
-                      {obj.user === null ? "Anonymous" : obj.user.name}:
-                    </Col>
-                    <Col span={20}>
-                      {obj.message}
-                    </Col>
-                    <hr />
-                  </Row>
-                )
-              })}
-            </Card>
-          </Col>
-        </Row>
-        <Row>
-          <Form onSubmit={this.handleSubmit} className="login-form">
-            <Col span={23}>
-              <FormItem>
-                {getFieldDecorator('message', {
-                  rules: [{ required: true, message: 'You need to write something' }],
-                })(
-                  <Input placeholder="Write some text..." />
-                )}
-              </FormItem>
+      <Layout className="layout" style={{ width: '100%' }}>
+        <Sider width={200} style={{ background: '#fff' }}>
+          <div style={{ fontSize: "14px", fontWeight: "bold" }}>Logged users</div>
+          {userList.map((user, i) => <div key={`user-${i}`}>{user.name}</div>)}
+        </Sider>
+        <Content style={{ padding: "10px" }}>
+          <Row>
+            <Col span={24}>
+              <Card style={{ height: "600px", marginBottom: "20px" }}>
+                {this.state.messages.map((obj, i) => {
+                  return (
+                    <Row key={`msg-${i}`}>
+                      <Col span={4}>
+                        {obj.user === null ? "Anonymous" : obj.user.name}:
+                      </Col>
+                      <Col span={20}>
+                        {obj.message}
+                      </Col>
+                      <hr />
+                    </Row>
+                  )
+                })}
+              </Card>
             </Col>
-            <Col span={1}>
-              <Button type="primary" htmlType="submit" className="login-form-button">
-                Send
-              </Button>
-            </Col>
-          </Form>
-        </Row>
-      </div>
+          </Row>
+          <Row>
+            <Form onSubmit={this.handleSubmit} className="login-form">
+              <Col span={23}>
+                <FormItem>
+                  {getFieldDecorator('message', {
+                    rules: [{ required: true, message: 'You need to write something' }],
+                  })(
+                    <Input placeholder="Write some text..." />
+                  )}
+                </FormItem>
+              </Col>
+              <Col span={1}>
+                <Button type="primary" htmlType="submit" className="login-form-button">
+                  Send
+                </Button>
+              </Col>
+            </Form>
+          </Row>
+        </Content>
+      </Layout>
     )
   }
 }
@@ -113,7 +127,16 @@ const HomeForm = Form.create()(Home)
 function mapStateToProps(state) {
   return {
     user: getUserInfo(state),
+    userList: getUserList(state)
   }
 }
 
-export default connect(mapStateToProps)(HomeForm)
+function mapDispatchToProps(dispatch) {
+  const actions = {
+    userListRequest,
+  }
+
+  return bindActionCreators(actions, dispatch)
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(HomeForm)

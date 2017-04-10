@@ -77,9 +77,23 @@ const route_saveToken = (req, res) => {
   })
 }
 
+const route_users = (req, res) => {
+  User.where('token').ne("").find({}, (error, users) => {
+    if (error) {
+      res.json({ error, users: null })
+
+      return false
+    }
+
+    res.json({ error: null, users })
+  })
+
+}
+
 module.exports = {
   login: route_login,
   predict: route_predict,
   saveToken: route_saveToken,
   upload: route_upload,
+  users: route_users,
 }
