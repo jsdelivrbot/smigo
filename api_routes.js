@@ -3,6 +3,11 @@ const mongoose = require('mongoose')
 mongoose.Promise = require('bluebird')
 mongoose.connect('mongodb://localhost:27017/smigo')
 
+const fs = require('fs')
+
+const jwt = require('jsonwebtoken')
+const cert = require('./secret').secretKey  // get private key
+
 // require models
 const User = require('./src/models/user')
 
@@ -27,10 +32,10 @@ const route_login = (req, res) => {
       return false
     }
 
-    const user = {
-      name: collection[0].name,
-      token: collection[0]._id
-    }
+    const token = jwt.sign({ id: collection[0]._id }, cert)
+    const name = collection[0].name
+
+    const user = { name, token }
 
     res.json({ success: true, error: false, user })
   })
