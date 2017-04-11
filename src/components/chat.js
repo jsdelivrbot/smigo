@@ -1,12 +1,13 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
+import moment from 'moment'
 
 import { getUserInfo, getUserList } from '../selectors/login_selector'
 
 import { userListRequest } from '../actions/index'
 
-import { Row, Col, Input, Button, Card, Form, Layout } from 'antd'
+import { Row, Col, Input, Button, Card, Form, Layout, Icon } from 'antd'
 const FormItem = Form.Item
 const { Content, Sider } = Layout
 
@@ -62,8 +63,7 @@ class Chat extends Component {
         const { message } = values
 
         const user = this.props.user
-        const date = new Date()
-        const timestamp = `${date.getHours()}:${date.getMinutes()}`
+        const timestamp = moment().format('hh:mm')
 
         socket.emit('chat message', { user, message, timestamp })
 
@@ -75,7 +75,9 @@ class Chat extends Component {
   renderSider(userList) {
     return (
       <Sider width={200} style={{ background: '#fff' }}>
-        <div style={{ fontSize: "14px", fontWeight: "bold" }}>Logged users</div>
+        <div style={{ fontSize: "14px", fontWeight: "bold" }}>
+          <Icon type="user" /> Logged users
+        </div>
         {userList.map((user, i) => <div key={`user-${i}`}>{user.name}</div>)}
       </Sider>
     )
@@ -85,7 +87,9 @@ class Chat extends Component {
     return (
       <Row>
         <Col span={24}>
-          <Card style={{ height: "600px", marginBottom: "20px" }}>
+          <Card
+            title="Chat"
+            style={{ height: "600px", marginBottom: "20px", overflowY: "scroll" }}>
             {this.renderChatMessages()}
           </Card>
         </Col>
@@ -99,15 +103,16 @@ class Chat extends Component {
 
   renderChatMessage(obj, i) {
     return (
-      <Row key={`msg-${i}`}>
-        <Col span={1}>
+      <Row key={`msg-${i}`} style={{ marginBottom: "5px" }}>
+        <Col span={1} style={{ minWidth: "55px" }}>
           {obj.timestamp}
         </Col>
-        <Col span={2}>
+        <Col span={2} style={{ minWidth: "80px" }}>
           {obj.user === null ? "Anonymous" : obj.user.name}
         </Col>
-        <Col span={21}>
+        <Col span={21} style={{ width: "100%" }}>
           {obj.message}
+          <hr style={{ marginTop: "10px", marginBottom: "10px" }} />
         </Col>
       </Row>
     )

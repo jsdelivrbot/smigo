@@ -2,8 +2,9 @@ const express = require('express')
 const app = express()
 
 const server = require('http').createServer(app)
-
 const io = require('socket.io')(server)
+
+const moment = require('moment')
 
 const path = require('path')
 const port = process.env.PORT || 8081
@@ -32,6 +33,10 @@ app.get('*', (req, res) => {
 })
 
 io.on('connection', (socket) => {
+  const timestamp = moment().format('hh:mm')
+
+  io.emit('chat message', { user: { name: 'Notification' }, message: 'User connected', timestamp })
+
   socket.on('chat message', function(msg){
     io.emit('chat message', msg);
   })
