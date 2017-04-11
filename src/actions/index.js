@@ -3,11 +3,13 @@ import {
   CLEAR_ERRORS,
   COUNT_LIBERTIES,
   DETECT_AND_MERGE_GROUPS,
+  GET_LOGGED_USERS,
   LOGIN_REQUEST,
   LOGIN_SUCCESS,
   LOGIN_ERROR,
   LOGOUT,
   PLACE_STONE_ON_BOARD,
+  USER_LIST_REQUEST,
   UPDATE_BOARD,
   UPDATE_TURN,
 } from './types'
@@ -43,7 +45,21 @@ export function logout(token) {
 export function clear_errors() {
   return {
     type: CLEAR_ERRORS,
-    payload: { }
+    payload: {}
+  }
+}
+
+export function userListRequest() {
+  return {
+    type: USER_LIST_REQUEST,
+    payload: {}
+  }
+}
+
+export function getLoggedUsers(users) {
+  return {
+    type: GET_LOGGED_USERS,
+    payload: { users }
   }
 }
 

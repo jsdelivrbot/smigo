@@ -1,7 +1,7 @@
 import { take, fork, cancel, call, put, cancelled } from 'redux-saga/effects'
 
-import { login_success, login_error } from '../actions/index'
-import { LOGIN_REQUEST, LOGIN_ERROR, LOGOUT } from '../actions/types'
+import { login_success, login_error, getLoggedUsers, userListRequest } from '../actions/index'
+import { LOGIN_REQUEST, LOGIN_ERROR, LOGOUT, USER_LIST_REQUEST } from '../actions/types'
 import * as Api from '../api'
 
 function* login() {
@@ -18,8 +18,11 @@ function* login() {
       yield cancel(task)
     }
 
+    yield fork(Api.clearItem, 'token')
     // returned value in task.result()
-    yield call(Api.clearItem, 'token')
+    // remove token from db
+    yield call(Api.saveToken, task.result(), '')
+    yield put(userListRequest())
   }
 }
 
@@ -39,7 +42,7 @@ function* authorize(username, password) {
 
     yield put(login_success(user))
 
-    // return id
+    return id
   }
   catch(error) {
     yield put(login_error(error))
@@ -51,6 +54,21 @@ function* authorize(username, password) {
   }
 }
 
+function* loggedUsers() {
+  while(true) {
+    const request = yield take(USER_LIST_REQUEST)
+
+    try {
+      const users = yield call(Api.getUsers)
+      yield put(getLoggedUsers(users))
+    }
+    catch(error) {
+      console.log('error in fetching logged users', error)
+    }
+  }
+}
+
 export default function* rootSaga() {
   yield fork(login)
+  yield fork(loggedUsers)
 }

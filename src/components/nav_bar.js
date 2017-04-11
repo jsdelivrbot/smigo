@@ -61,7 +61,7 @@ class NavBar extends Component {
             style={{ lineHeight: '64px' }}
             onClick={e => { this.setState({ selected: e.key })}}
           >
-            <Menu.Item key="1"><NavLink to="/">Home</NavLink></Menu.Item>
+            <Menu.Item key="1"><NavLink to="/">Chat</NavLink></Menu.Item>
             <Menu.Item key="2"><NavLink to="/game">Game</NavLink></Menu.Item>
             <Menu.Item key="3"><NavLink to="/editor">Editor</NavLink></Menu.Item>
             <Menu.Item key="99" style={{ float: "right" }}>{this.renderLogin()}</Menu.Item>

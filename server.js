@@ -1,7 +1,12 @@
 const express = require('express')
+const app = express()
+
+const server = require('http').createServer(app)
+
+const io = require('socket.io')(server)
+
 const path = require('path')
 const port = process.env.PORT || 8081
-const app = express()
 
 // use body-parser middleware
 const bodyParser = require('body-parser')
@@ -20,11 +25,22 @@ app.post('/api/login', routes.login)
 app.post('/api/predict', routes.predict)
 app.post('/api/upload', routes.upload)
 app.post('/api/save_token', routes.saveToken)
+app.get('/api/users', routes.users)
 
 app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, 'index.html'))
 })
 
-app.listen(port)
+io.on('connection', (socket) => {
+  socket.on('chat message', function(msg){
+    io.emit('chat message', msg);
+  })
+
+  socket.on('disconnect', () => {
+    // console.log('user disconnected')
+  })
+})
+
+server.listen(port)
 
 console.log(`Server started. Listening to port ${port}.`)

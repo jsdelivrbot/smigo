@@ -1,4 +1,10 @@
-import { LOGIN_SUCCESS, LOGIN_ERROR, LOGOUT, CLEAR_ERRORS } from '../actions/types'
+import {
+  CLEAR_ERRORS,
+  GET_LOGGED_USERS,
+  LOGIN_ERROR,
+  LOGIN_SUCCESS,
+  LOGOUT,
+} from '../actions/types'
 
 const INITIAL_STATE = {
   user: null,
@@ -19,6 +25,10 @@ export default function(state = INITIAL_STATE, action) {
     return { ...state, user: null, error: null }
   case CLEAR_ERRORS:
     return { ...state, error: null }
+  case GET_LOGGED_USERS:
+    const { users } = action.payload
+
+    return { ...state, users }
   }
 
   return state
