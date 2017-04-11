@@ -78,7 +78,7 @@ const route_saveToken = (req, res) => {
 }
 
 const route_users = (req, res) => {
-  User.where('token').ne("").find({}, (error, users) => {
+  User.find({ token: { $ne: "" }}, 'name token', (error, users) => {
     if (error) {
       res.json({ error, users: null })
 
