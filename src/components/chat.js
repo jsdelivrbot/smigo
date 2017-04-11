@@ -32,6 +32,7 @@ class Chat extends Component {
     this.props.userListRequest()
 
     this.handleSubmit = this.handleSubmit.bind(this)
+    this.renderChatMessages = this.renderChatMessages.bind(this)
     this.renderChatWindow = this.renderChatWindow.bind(this)
     this.renderInputs = this.renderInputs.bind(this)
   }
@@ -85,22 +86,28 @@ class Chat extends Component {
       <Row>
         <Col span={24}>
           <Card style={{ height: "600px", marginBottom: "20px" }}>
-            {this.state.messages.map((obj, i) => {
-              return (
-                <Row key={`msg-${i}`}>
-                  <Col span={1}>
-                    {obj.timestamp}
-                  </Col>
-                  <Col span={2}>
-                    {obj.user === null ? "Anonymous" : obj.user.name}
-                  </Col>
-                  <Col span={21}>
-                    {obj.message}
-                  </Col>
-                </Row>
-              )
-            })}
+            {this.renderChatMessages()}
           </Card>
+        </Col>
+      </Row>
+    )
+  }
+
+  renderChatMessages() {
+    return this.state.messages.map(this.renderChatMessage)
+  }
+
+  renderChatMessage(obj, i) {
+    return (
+      <Row key={`msg-${i}`}>
+        <Col span={1}>
+          {obj.timestamp}
+        </Col>
+        <Col span={2}>
+          {obj.user === null ? "Anonymous" : obj.user.name}
+        </Col>
+        <Col span={21}>
+          {obj.message}
         </Col>
       </Row>
     )
