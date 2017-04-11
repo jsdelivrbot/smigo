@@ -7,7 +7,7 @@ import { getUserInfo, getUserList } from '../selectors/login_selector'
 
 import { userListRequest } from '../actions/index'
 
-import { Row, Col, Input, Button, Card, Form, Layout, Icon } from 'antd'
+import { Row, Col, Input, Button, Card, Form, Layout, Icon, Alert } from 'antd'
 const FormItem = Form.Item
 const { Content, Sider } = Layout
 
@@ -28,18 +28,22 @@ class Chat extends Component {
 
     this.state = {
       messages: [],
+      incoming: {},
     }
 
     this.props.userListRequest()
 
+    this.getName = this.getName.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
     this.renderChatMessages = this.renderChatMessages.bind(this)
     this.renderChatWindow = this.renderChatWindow.bind(this)
+    this.renderIncomingText = this.renderIncomingText.bind(this)
     this.renderInputs = this.renderInputs.bind(this)
+    this.typingMessage = this.typingMessage.bind(this)
   }
 
   componentDidMount() {
-    socket.on('chat message', (msg) => {
+    socket.on('chat message', msg => {
       const { messages } = this.state
 
       this.setState({
@@ -49,10 +53,24 @@ class Chat extends Component {
         ]
       })
     })
+
+    socket.on('incoming chat message', whoIsTyping => {
+      const { incoming } = this.state
+
+      const [name, isTyping] = whoIsTyping
+
+      this.setState({
+        incoming: {
+          ...incoming,
+          [name]: isTyping,
+        }
+      })
+    })
   }
 
   componentWillUnmount() {
     socket.removeListener('chat message')
+    socket.removeListener('incoming chat message')
   }
 
   handleSubmit(e) {
@@ -68,8 +86,23 @@ class Chat extends Component {
         socket.emit('chat message', { user, message, timestamp })
 
         this.props.form.setFieldsValue({ message: "" })
+        this.typingMessage(e)
       }
     })
+  }
+
+  getName() {
+    return this.props.user && this.props.user.name || "Anonymous"
+  }
+
+  typingMessage(e) {
+    e.preventDefault()
+
+    const name = this.getName()
+
+    const isTyping = e.target.value ? true : false
+
+    socket.emit('incoming chat message', [name, isTyping])
   }
 
   renderSider(userList) {
@@ -102,6 +135,16 @@ class Chat extends Component {
   }
 
   renderChatMessage(obj, i) {
+    if (obj.user && obj.user.name === 'Notification') {
+      return (
+        <Row key={`msg-${i}`} style={{ marginBottom: "5px" }}>
+          <Col span={24}>
+            <Alert message={obj.message} type="info" showIcon />
+          </Col>
+        </Row>
+      )
+    }
+
     return (
       <Row key={`msg-${i}`} style={{ marginBottom: "5px" }}>
         <Col span={1} style={{ minWidth: "55px" }}>
@@ -129,7 +172,7 @@ class Chat extends Component {
               {getFieldDecorator('message', {
                 rules: [{ required: true, message: 'You need to write something' }],
               })(
-                <Input placeholder="Write some text..." />
+                <Input placeholder="Write some text..." onChange={this.typingMessage} />
               )}
             </FormItem>
           </Col>
@@ -143,6 +186,21 @@ class Chat extends Component {
     )
   }
 
+  renderIncomingText() {
+    const whoIsTyping = Object.keys(this.state.incoming)
+      .filter((val, i) => this.state.incoming[val])
+
+    if (whoIsTyping.length === 0) return false
+
+    return (
+      <Row>
+        <Col span={24}>
+          {whoIsTyping.map((name, i) => <div key={`typing-${i}`}>{name} is typing...</div>)}
+        </Col>
+      </Row>
+    )
+  }
+
   render() {
     const userList = this.props.userList || []
 
@@ -152,6 +210,7 @@ class Chat extends Component {
         <Content style={{ padding: "10px" }}>
           {this.renderChatWindow()}
           {this.renderInputs()}
+          {this.renderIncomingText()}
         </Content>
       </Layout>
     )

@@ -37,9 +37,8 @@ io.on('connection', (socket) => {
 
   io.emit('chat message', { user: { name: 'Notification' }, message: 'User connected', timestamp })
 
-  socket.on('chat message', function(msg){
-    io.emit('chat message', msg);
-  })
+  socket.on('chat message', msg => io.emit('chat message', msg))
+  socket.on('incoming chat message', name => io.emit('incoming chat message', name))
 
   socket.on('disconnect', () => {
     // console.log('user disconnected')
