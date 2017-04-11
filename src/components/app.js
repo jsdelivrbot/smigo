@@ -5,7 +5,7 @@ import { Layout } from 'antd'
 const { Content, Footer } = Layout
 
 import NavBar from './nav_bar'
-import Home from './home'
+import Chat from './chat'
 import Game from './game'
 import Editor from './editor/editor'
 import LoginForm from './login'
@@ -22,7 +22,7 @@ class App extends Component {
         <Content style={{ padding: '0 50px' }}>
           <div style={{ background: '#fff', padding: 24, minHeight: 280 }}>
             <Switch>
-              <Route exact path="/" component={Home} />
+              <Route exact path="/" component={Chat} />
               <Route path="/game" component={Game} />
               <Route path="/editor" component={Editor} />
               <Route path="/login" component={LoginForm} />
