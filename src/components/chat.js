@@ -3,22 +3,25 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import moment from 'moment'
 
+import { userListRequest } from '../actions/index'
 import { getUserInfo, getUserList } from '../selectors/login_selector'
 
-import { userListRequest } from '../actions/index'
+import ChatWindow from './chat/ChatWindow'
+import IncomingText from './chat/IncomingText'
+import MessageInputs from './chat/MessageInputs'
 
-import { Row, Col, Input, Button, Card, Form, Layout, Icon, Alert } from 'antd'
-const FormItem = Form.Item
+import { Form, Layout, Icon, Tabs } from 'antd'
 const { Content, Sider } = Layout
+const TabPane = Tabs.TabPane
 
 // socket.io
 import io from 'socket.io-client'
-const url = `http://${window.location.hostname}:8081`
-const socket = io(url)
+const url = `http://${window.location.hostname}:8081/chat`
+const chatSocket = io(url)
 
-socket.on('error', console.error.bind(console))
+chatSocket.on('error', console.error.bind(console))
 
-socket.on('connect', () => {
+chatSocket.on('connect', () => {
   // console.log('connected to server')
 })
 
@@ -26,54 +29,108 @@ class Chat extends Component {
   constructor(props) {
     super(props)
 
+    const panes = [
+      { title: 'General chat', key: 0, closable: false },
+      { title: 'Room 1', key: 1, closable: true },
+      { title: 'Room 2', key: 2, closable: true },
+      { title: 'Room 3', key: 3, closable: true },
+      { title: 'Room 4', key: 4, closable: true },
+      { title: 'Room 5', key: 5, closable: true },
+      // { title: 'Room 6', key: 6, closable: true },
+      // { title: 'Room 7', key: 7, closable: true },
+      // { title: 'Room 8', key: 8, closable: true },
+      // { title: 'Room 9', key: 9, closable: true },
+      // { title: 'Room 10', key: 10, closable: true },
+      // { title: 'Room 11', key: 11, closable: true },
+      // { title: 'Room 12', key: 12, closable: true },
+      // { title: 'Room 13', key: 13, closable: true },
+      // { title: 'Room 14', key: 14, closable: true },
+    ]
+
+    const messages = panes.reduce((prev, cur, i) => {
+      prev[i] = []
+
+      return prev
+    }, {})
+
+    const incoming = panes.reduce((prev, cur, i) => {
+      prev[i] = {}
+
+      return prev
+    }, {})
+
     this.state = {
-      messages: [],
-      incoming: {},
+      messages,
+      incoming,
+      channel: panes[0].key,
+      panes,
     }
+
+    this.newTabIndex = 0
 
     this.props.userListRequest()
 
     this.getName = this.getName.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
-    this.renderChatMessages = this.renderChatMessages.bind(this)
-    this.renderChatWindow = this.renderChatWindow.bind(this)
-    this.renderIncomingText = this.renderIncomingText.bind(this)
-    this.renderInputs = this.renderInputs.bind(this)
     this.typingMessage = this.typingMessage.bind(this)
   }
 
+  appendMessages = ({ msg, channel, messages }) => {
+    return {
+      ...messages,
+      [channel]: [
+        ...messages[channel],
+        msg,
+      ]
+    }
+  }
+
+  appendIncoming = ({ name, isTyping, channel, incoming }) => {
+    return {
+      ...incoming,
+      [channel]: {
+        ...incoming[channel],
+        [name]: isTyping,
+      }
+    }
+  }
+
   componentDidMount() {
-    socket.on('chat message', msg => {
+    chatSocket.on('chat message', (msg, channel) => {
       const { messages } = this.state
 
       this.setState({
-        messages: [
-          ...messages,
-          msg
-        ]
+        messages: this.appendMessages({ msg, channel, messages })
       })
     })
 
-    socket.on('incoming chat message', whoIsTyping => {
+    chatSocket.on('incoming chat message', (whoIsTyping, channel) => {
       const { incoming } = this.state
 
       const [name, isTyping] = whoIsTyping
 
       this.setState({
-        incoming: {
-          ...incoming,
-          [name]: isTyping,
-        }
+        incoming: this.appendIncoming({ name, isTyping, channel, incoming })
       })
+    })
+
+    chatSocket.on('add channel', () => {
+      this.add()
+    })
+
+    chatSocket.on('remove channel', targetKey => {
+      this.remove(targetKey)
     })
   }
 
   componentWillUnmount() {
-    socket.removeListener('chat message')
-    socket.removeListener('incoming chat message')
+    chatSocket.removeListener('chat message')
+    chatSocket.removeListener('incoming chat message')
+    chatSocket.removeListener('add channel')
+    chatSocket.removeListener('remove channel')
   }
 
-  handleSubmit(e) {
+  handleSubmit = e => {
     e.preventDefault()
 
     this.props.form.validateFields((err, values) => {
@@ -82,8 +139,9 @@ class Chat extends Component {
 
         const user = this.props.user
         const timestamp = moment().format('hh:mm')
+        const { channel } = this.state
 
-        socket.emit('chat message', { user, message, timestamp })
+        chatSocket.emit('chat message', { user, message, timestamp }, channel)
 
         this.props.form.setFieldsValue({ message: "" })
         this.typingMessage(e)
@@ -95,19 +153,19 @@ class Chat extends Component {
     return this.props.user && this.props.user.name || "Anonymous"
   }
 
-  typingMessage(e) {
+  typingMessage = e => {
     e.preventDefault()
 
     const name = this.getName()
-
     const isTyping = e.target.value ? true : false
+    const { channel } = this.state
 
-    socket.emit('incoming chat message', [name, isTyping])
+    chatSocket.emit('incoming chat message', [name, isTyping], channel)
   }
 
-  renderSider(userList) {
+  renderSider = userList => {
     return (
-      <Sider width={200} style={{ background: '#fff' }}>
+      <Sider width={120} style={{ background: '#fff' }}>
         <div style={{ fontSize: "14px", fontWeight: "bold" }}>
           <Icon type="user" /> Logged users
         </div>
@@ -116,102 +174,95 @@ class Chat extends Component {
     )
   }
 
-  renderChatWindow() {
-    return (
-      <Row>
-        <Col span={24}>
-          <Card
-            title="Chat"
-            style={{ height: "600px", marginBottom: "20px", overflowY: "scroll" }}>
-            {this.renderChatMessages()}
-          </Card>
-        </Col>
-      </Row>
-    )
-  }
+  handleChannelChange = channel => this.setState({ channel })
 
-  renderChatMessages() {
-    return this.state.messages.map(this.renderChatMessage)
-  }
+  handleEdit = (targetKey, action) => {
+    const channel = this[action](targetKey)
 
-  renderChatMessage(obj, i) {
-    if (obj.user && obj.user.name === 'Notification') {
-      return (
-        <Row key={`msg-${i}`} style={{ marginBottom: "5px" }}>
-          <Col span={24}>
-            <Alert message={obj.message} type="info" showIcon />
-          </Col>
-        </Row>
-      )
+    switch(action) {
+    case 'add':
+      chatSocket.emit('add channel')
+      break
+    case 'remove':
+      chatSocket.emit('remove channel', targetKey)
+      break
     }
 
-    return (
-      <Row key={`msg-${i}`} style={{ marginBottom: "5px" }}>
-        <Col span={1} style={{ minWidth: "55px" }}>
-          {obj.timestamp}
-        </Col>
-        <Col span={2} style={{ minWidth: "80px" }}>
-          {obj.user === null ? "Anonymous" : obj.user.name}
-        </Col>
-        <Col span={21} style={{ width: "100%" }}>
-          {obj.message}
-          <hr style={{ marginTop: "10px", marginBottom: "10px" }} />
-        </Col>
-      </Row>
-    )
+    this.setState({ channel })
   }
 
-  renderInputs() {
-    const { getFieldDecorator } = this.props.form
+  add = () => {
+    const { panes, messages, incoming } = this.state
+    const activeKey = 99 + this.newTabIndex
+    this.newTabIndex++
 
-    return (
-      <Row>
-        <Form onSubmit={this.handleSubmit} className="login-form">
-          <Col span={22}>
-            <FormItem style={{ marginRight: "10px", marginTop: "-2px" }}>
-              {getFieldDecorator('message', {
-                rules: [{ required: true, message: 'You need to write something' }],
-              })(
-                <Input placeholder="Write some text..." onChange={this.typingMessage} />
-              )}
-            </FormItem>
-          </Col>
-          <Col span={2}>
-            <Button type="primary" htmlType="submit" className="login-form-button">
-              Send
-            </Button>
-          </Col>
-        </Form>
-      </Row>
-    )
+    const newPane = { title: `New Tab ${activeKey}`, key: activeKey }
+
+    panes.push(newPane)
+    messages[activeKey] = []
+    incoming[activeKey] = {}
+
+    this.setState({ panes, messages, incoming, })
+
+    return activeKey
   }
 
-  renderIncomingText() {
-    const whoIsTyping = Object.keys(this.state.incoming)
-      .filter((val, i) => this.state.incoming[val])
+  remove = targetKey => {
+    let { channel, panes } = this.state
 
-    if (whoIsTyping.length === 0) return false
+    let lastIndex
 
-    return (
-      <Row>
-        <Col span={24}>
-          {whoIsTyping.map((name, i) => <div key={`typing-${i}`}>{name} is typing...</div>)}
-        </Col>
-      </Row>
-    )
+    targetKey = Number(targetKey)
+
+    panes.forEach((pane, i) => {
+      if (pane.key === targetKey) {
+        lastIndex = i - 1;
+      }
+    })
+
+    const newPanes = panes.filter(pane => pane.key !== targetKey)
+
+    if (lastIndex >= 0 && channel === targetKey) {
+      channel = newPanes[lastIndex].key
+    }
+
+    this.setState({ panes: newPanes })
+
+    return channel
   }
 
   render() {
     const userList = this.props.userList || []
+    const { channel, messages, incoming } = this.state
 
     return (
-      <Layout className="layout" style={{ width: '100%' }}>
+      <Layout className="layout" style={{ width: '100%', backgroundColor: "#fff" }}>
         {this.renderSider(userList)}
-        <Content style={{ padding: "10px" }}>
-          {this.renderChatWindow()}
-          {this.renderInputs()}
-          {this.renderIncomingText()}
-        </Content>
+        <Tabs
+          onChange={this.handleChannelChange}
+          activeKey={String(channel)}
+          tabPosition="top"
+          type="editable-card"
+          animated={false}
+          style={{ width: '100%', marginLeft: "20px" }}
+          onEdit={this.handleEdit}
+        >
+          {this.state.panes.map(pane => {
+            return (
+              <TabPane tab={pane.title} key={pane.key} closable={pane.closable}>
+                <Content style={{ padding: "10px" }}>
+                  <ChatWindow messages={messages[pane.key]} />
+                  <MessageInputs
+                    form={this.props.form}
+                    onSubmit={this.handleSubmit}
+                    onChange={this.typingMessage}
+                  />
+                  <IncomingText incoming={incoming[channel]} />
+                </Content>
+              </TabPane>
+            )
+          })}
+        </Tabs>
       </Layout>
     )
   }
@@ -219,19 +270,7 @@ class Chat extends Component {
 
 const ChatForm = Form.create()(Chat)
 
-function mapStateToProps(state) {
-  return {
-    user: getUserInfo(state),
-    userList: getUserList(state)
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-  const actions = {
-    userListRequest,
-  }
-
-  return bindActionCreators(actions, dispatch)
-}
+const mapStateToProps = state => { return { user: getUserInfo(state), userList: getUserList(state) }}
+const mapDispatchToProps = dispatch => bindActionCreators({ userListRequest }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChatForm)
