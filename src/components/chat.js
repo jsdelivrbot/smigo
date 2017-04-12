@@ -10,7 +10,7 @@ import ChatWindow from './chat/ChatWindow'
 import IncomingText from './chat/IncomingText'
 import MessageInputs from './chat/MessageInputs'
 
-import { Form, Layout, Icon, Tabs } from 'antd'
+import { Form, Layout, Icon, Tabs, Badge } from 'antd'
 const { Content, Sider } = Layout
 const TabPane = Tabs.TabPane
 
@@ -30,12 +30,12 @@ class Chat extends Component {
     super(props)
 
     const panes = [
-      { title: 'General chat', key: 0, closable: false },
-      { title: 'Room 1', key: 1, closable: true },
-      { title: 'Room 2', key: 2, closable: true },
-      { title: 'Room 3', key: 3, closable: true },
-      { title: 'Room 4', key: 4, closable: true },
-      { title: 'Room 5', key: 5, closable: true },
+      { title: 'General chat', key: 0, closable: false, badge: 0 },
+      { title: 'Room 1', key: 1, closable: true, badge: 0 },
+      { title: 'Room 2', key: 2, closable: true, badge: 0 },
+      { title: 'Room 3', key: 3, closable: true, badge: 0 },
+      { title: 'Room 4', key: 4, closable: true, badge: 0 },
+      { title: 'Room 5', key: 5, closable: true, badge: 0 },
       // { title: 'Room 6', key: 6, closable: true },
       // { title: 'Room 7', key: 7, closable: true },
       // { title: 'Room 8', key: 8, closable: true },
@@ -97,10 +97,18 @@ class Chat extends Component {
 
   componentDidMount() {
     chatSocket.on('chat message', (msg, channel) => {
-      const { messages } = this.state
+      const { messages, panes } = this.state
+
+      const newPanes = panes.map(pane => {
+        if (pane.key == channel && channel != this.state.channel) {
+          pane.badge += 1
+        }
+
+        return pane
+      })
 
       this.setState({
-        messages: this.appendMessages({ msg, channel, messages })
+        messages: this.appendMessages({ msg, channel, messages, panes: newPanes })
       })
     })
 
@@ -174,7 +182,19 @@ class Chat extends Component {
     )
   }
 
-  handleChannelChange = channel => this.setState({ channel })
+  handleChannelChange = channel => {
+    const { panes } = this.state
+
+    const newPanes = panes.map(pane => {
+      if (pane.key == channel) {
+        pane.badge = 0
+      }
+
+      return pane
+    })
+
+    this.setState({ channel, panes: newPanes })
+  }
 
   handleEdit = (targetKey, action) => {
     const channel = this[action](targetKey)
@@ -247,9 +267,15 @@ class Chat extends Component {
           style={{ width: '100%', marginLeft: "20px" }}
           onEdit={this.handleEdit}
         >
-          {this.state.panes.map(pane => {
+          {this.state.panes.map((pane, i) => {
+            const title = (
+              <Badge count={pane.badge} key={`badge-${i}`}>
+                  {pane.title}
+              </Badge>
+            )
+
             return (
-              <TabPane tab={pane.title} key={pane.key} closable={pane.closable}>
+              <TabPane tab={title} key={pane.key} closable={pane.closable}>
                 <Content style={{ padding: "10px" }}>
                   <ChatWindow messages={messages[pane.key]} />
                   <MessageInputs
