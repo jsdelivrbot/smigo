@@ -143,14 +143,14 @@ class Chat extends Component {
 
   render() {
     const userList = this.props.userList || []
-    const { channel } = this.state
+    const { channel, messages, incoming } = this.state
 
     return (
       <Layout className="layout" style={{ width: '100%', backgroundColor: "#fff" }}>
         {this.renderSider(userList)}
         <Tabs
           onChange={this.handleChannelChange}
-          activeKey={String(this.state.channel)}
+          activeKey={String(channel)}
           tabPosition="left"
           style={{ width: '100%' }}
         >
@@ -158,13 +158,13 @@ class Chat extends Component {
             return (
               <TabPane tab={pane.title} key={pane.key}>
                 <Content style={{ padding: "10px" }}>
-                  <ChatWindow messages={this.state.messages[pane.key]} />
+                  <ChatWindow messages={messages[pane.key]} />
                   <MessageInputs
                     form={this.props.form}
                     onSubmit={this.handleSubmit}
                     onChange={this.typingMessage}
                   />
-                  <IncomingText incoming={this.state.incoming[channel]} />
+                  <IncomingText incoming={incoming[channel]} />
                 </Content>
               </TabPane>
             )
