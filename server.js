@@ -32,13 +32,6 @@ app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, 'index.html'))
 })
 
-// const chat = io
-//   .of('/chat')
-//   .on('connection', socket => {
-//     chat.emit('connection message')
-//     console.log('chat connection')
-//   })
-
 const chat = io
   .of('/chat')
   .on('connection', socket => {
