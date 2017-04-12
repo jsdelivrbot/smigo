@@ -8,9 +8,9 @@ import { getUserInfo, getUserList } from '../selectors/login_selector'
 
 import ChatWindow from './chat/ChatWindow'
 import IncomingText from './chat/IncomingText'
+import MessageInputs from './chat/MessageInputs'
 
-import { Row, Col, Input, Button, Form, Layout, Icon, Tabs } from 'antd'
-const FormItem = Form.Item
+import { Form, Layout, Icon, Tabs } from 'antd'
 const { Content, Sider } = Layout
 const TabPane = Tabs.TabPane
 
@@ -47,8 +47,6 @@ class Chat extends Component {
 
     this.getName = this.getName.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
-    this.renderIncomingText = this.renderIncomingText.bind(this)
-    this.renderInputs = this.renderInputs.bind(this)
     this.typingMessage = this.typingMessage.bind(this)
   }
 
@@ -141,49 +139,7 @@ class Chat extends Component {
     )
   }
 
-  renderInputs() {
-    const { getFieldDecorator } = this.props.form
-
-    return (
-      <Row>
-        <Form onSubmit={this.handleSubmit} className="login-form">
-          <Col span={22}>
-            <FormItem style={{ marginRight: "10px", marginTop: "-2px" }}>
-              {getFieldDecorator('message', {
-                rules: [{ required: true, message: 'You need to write something' }],
-              })(
-                <Input placeholder="Write some text..." onChange={this.typingMessage} />
-              )}
-            </FormItem>
-          </Col>
-          <Col span={2}>
-            <Button type="primary" htmlType="submit" className="login-form-button">
-              Send
-            </Button>
-          </Col>
-        </Form>
-      </Row>
-    )
-  }
-
-  renderIncomingText() {
-    const { channel } = this.state
-
-    const whoIsTyping = Object.keys(this.state.incoming[channel])
-      .filter((val, i) => this.state.incoming[channel][val])
-
-    if (whoIsTyping.length === 0) return false
-
-    return (
-      <Row>
-        <Col span={24}>
-          {whoIsTyping.map((name, i) => <div key={`typing-${i}`}>{name} is typing...</div>)}
-        </Col>
-      </Row>
-    )
-  }
-
-  onChannelChange = channel => this.setState({ channel })
+  handleChannelChange = channel => this.setState({ channel })
 
   render() {
     const userList = this.props.userList || []
@@ -193,7 +149,7 @@ class Chat extends Component {
       <Layout className="layout" style={{ width: '100%', backgroundColor: "#fff" }}>
         {this.renderSider(userList)}
         <Tabs
-          onChange={this.onChannelChange}
+          onChange={this.handleChannelChange}
           activeKey={String(this.state.channel)}
           tabPosition="left"
           style={{ width: '100%' }}
@@ -203,7 +159,11 @@ class Chat extends Component {
               <TabPane tab={pane.title} key={pane.key}>
                 <Content style={{ padding: "10px" }}>
                   <ChatWindow messages={this.state.messages[pane.key]} />
-                  {this.renderInputs()}
+                  <MessageInputs
+                    form={this.props.form}
+                    onSubmit={this.handleSubmit}
+                    onChange={this.typingMessage}
+                  />
                   <IncomingText incoming={this.state.incoming[channel]} />
                 </Content>
               </TabPane>
