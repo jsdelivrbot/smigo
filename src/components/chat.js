@@ -30,13 +30,38 @@ class Chat extends Component {
     super(props)
 
     const panes = [
-      { title: 'General chat', key: 0 },
-      { title: 'Room 1', key: 1 },
+      { title: 'General chat', key: 0, closable: false },
+      { title: 'Room 1', key: 1, closable: true },
+      { title: 'Room 2', key: 2, closable: true },
+      { title: 'Room 3', key: 3, closable: true },
+      { title: 'Room 4', key: 4, closable: true },
+      { title: 'Room 5', key: 5, closable: true },
+      { title: 'Room 6', key: 6, closable: true },
+      { title: 'Room 7', key: 7, closable: true },
+      { title: 'Room 8', key: 8, closable: true },
+      { title: 'Room 9', key: 9, closable: true },
+      { title: 'Room 10', key: 10, closable: true },
+      { title: 'Room 11', key: 11, closable: true },
+      { title: 'Room 12', key: 12, closable: true },
+      { title: 'Room 13', key: 13, closable: true },
+      { title: 'Room 14', key: 14, closable: true },
     ]
 
+    const messages = panes.reduce((prev, cur, i) => {
+      prev[i] = []
+
+      return prev
+    }, {})
+
+    const incoming = panes.reduce((prev, cur, i) => {
+      prev[i] = {}
+
+      return prev
+    }, {})
+
     this.state = {
-      messages: { 0: [], 1: [] },
-      incoming: { 0: {}, 1: {} },
+      messages,
+      incoming,
       channel: panes[0].key,
       panes,
     }
@@ -50,7 +75,7 @@ class Chat extends Component {
     this.typingMessage = this.typingMessage.bind(this)
   }
 
-  appendMessages({ msg, channel, messages }) {
+  appendMessages = ({ msg, channel, messages }) => {
     return {
       ...messages,
       [channel]: [
@@ -60,7 +85,7 @@ class Chat extends Component {
     }
   }
 
-  appendIncoming({ name, isTyping, channel, incoming }) {
+  appendIncoming = ({ name, isTyping, channel, incoming }) => {
     return {
       ...incoming,
       [channel]: {
@@ -95,7 +120,7 @@ class Chat extends Component {
     chatSocket.removeListener('incoming chat message')
   }
 
-  handleSubmit(e) {
+  handleSubmit = e => {
     e.preventDefault()
 
     this.props.form.validateFields((err, values) => {
@@ -118,7 +143,7 @@ class Chat extends Component {
     return this.props.user && this.props.user.name || "Anonymous"
   }
 
-  typingMessage(e) {
+  typingMessage = e => {
     e.preventDefault()
 
     const name = this.getName()
@@ -128,7 +153,7 @@ class Chat extends Component {
     chatSocket.emit('incoming chat message', [name, isTyping], channel)
   }
 
-  renderSider(userList) {
+  renderSider = userList => {
     return (
       <Sider width={120} style={{ background: '#fff' }}>
         <div style={{ fontSize: "14px", fontWeight: "bold" }}>
@@ -141,6 +166,34 @@ class Chat extends Component {
 
   handleChannelChange = channel => this.setState({ channel })
 
+  onEdit = (targetKey, action) => {
+    console.log('action', action)
+
+    if (action === 'remove') this[action](targetKey)
+  }
+
+  remove = (targetKey) => {
+    let { channel, panes } = this.state
+
+    let lastIndex
+
+    targetKey = Number(targetKey)
+
+    panes.forEach((pane, i) => {
+      if (pane.key === targetKey) {
+        lastIndex = i - 1;
+      }
+    })
+
+    const newPanes = panes.filter(pane => pane.key !== targetKey)
+
+    if (lastIndex >= 0 && channel === targetKey) {
+      channel = newPanes[lastIndex].key
+    }
+
+    this.setState({ panes: newPanes, channel })
+  }
+
   render() {
     const userList = this.props.userList || []
     const { channel, messages, incoming } = this.state
@@ -151,12 +204,15 @@ class Chat extends Component {
         <Tabs
           onChange={this.handleChannelChange}
           activeKey={String(channel)}
-          tabPosition="left"
-          style={{ width: '100%' }}
+          tabPosition="top"
+          type="editable-card"
+          animated={false}
+          style={{ width: '100%', marginLeft: "20px" }}
+          onEdit={this.onEdit}
         >
           {this.state.panes.map(pane => {
             return (
-              <TabPane tab={pane.title} key={pane.key}>
+              <TabPane tab={pane.title} key={pane.key} closable={pane.closable}>
                 <Content style={{ padding: "10px" }}>
                   <ChatWindow messages={messages[pane.key]} />
                   <MessageInputs
@@ -177,19 +233,7 @@ class Chat extends Component {
 
 const ChatForm = Form.create()(Chat)
 
-function mapStateToProps(state) {
-  return {
-    user: getUserInfo(state),
-    userList: getUserList(state)
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-  const actions = {
-    userListRequest,
-  }
-
-  return bindActionCreators(actions, dispatch)
-}
+const mapStateToProps = state => { return { user: getUserInfo(state), userList: getUserList(state) }}
+const mapDispatchToProps = dispatch => bindActionCreators({ userListRequest }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChatForm)
