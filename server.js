@@ -36,8 +36,15 @@ const chat = io
   .of('/chat')
   .on('connection', socket => {
     const timestamp = moment().format('hh:mm')
+    const generalChatChannel = 0
 
-    chat.emit('chat message', { user: { name: 'Notification' }, message: 'User connected', timestamp }, '1')
+    chat.emit('chat message', {
+      user: {
+        name: 'Notification'
+      },
+      message: 'User connected',
+      timestamp ,
+    }, generalChatChannel)
 
     socket.on('chat message', (msg, channel) => chat.emit('chat message', msg, channel))
     socket.on('incoming chat message', (name, channel) => chat.emit('incoming chat message', name, channel))
