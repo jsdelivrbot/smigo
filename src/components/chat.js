@@ -97,8 +97,9 @@ class Chat extends Component {
 
         const user = this.props.user
         const timestamp = moment().format('hh:mm')
+        const channel = this.state.activeKey
 
-        generalChatSocket.emit('chat message', { user, message, timestamp })
+        generalChatSocket.emit('chat message', { user, message, timestamp }, channel)
 
         this.props.form.setFieldsValue({ message: "" })
         this.typingMessage(e)
