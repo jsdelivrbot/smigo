@@ -172,10 +172,10 @@ class Chat extends Component {
 
   add = () => {
     const { panes, messages, incoming } = this.state
-    const activeKey = 99
+    const activeKey = 99 + this.newTabIndex
     this.newTabIndex++
 
-    panes.push({ title: 'New Tab', key: activeKey })
+    panes.push({ title: `New Tab ${activeKey}`, key: activeKey })
     messages[activeKey] = []
     incoming[activeKey] = {}
 
