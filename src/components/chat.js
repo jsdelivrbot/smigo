@@ -7,6 +7,7 @@ import { userListRequest } from '../actions/index'
 import { getUserInfo, getUserList } from '../selectors/login_selector'
 
 import ChatWindow from './chat/ChatWindow'
+import IncomingText from './chat/IncomingText'
 
 import { Row, Col, Input, Button, Form, Layout, Icon, Tabs } from 'antd'
 const FormItem = Form.Item
@@ -29,14 +30,14 @@ class Chat extends Component {
     super(props)
 
     const panes = [
-      { title: 'General chat', key: '1' },
-      { title: 'Tab 2', key: '2' },
+      { title: 'General chat', key: 0 },
+      { title: 'Room 1', key: 1 },
     ]
 
     this.state = {
-      messages: { '1': [], '2': [] },
-      incoming: { '1': {}, '2': {} },
-      activeKey: panes[0].key,
+      messages: { 0: [], 1: [] },
+      incoming: { 0: {}, 1: {} },
+      channel: panes[0].key,
       panes,
     }
 
@@ -51,18 +52,32 @@ class Chat extends Component {
     this.typingMessage = this.typingMessage.bind(this)
   }
 
+  appendMessages({ msg, channel, messages }) {
+    return {
+      ...messages,
+      [channel]: [
+        ...messages[channel],
+        msg,
+      ]
+    }
+  }
+
+  appendIncoming({ name, isTyping, channel, incoming }) {
+    return {
+      ...incoming,
+      [channel]: {
+        ...incoming[channel],
+        [name]: isTyping,
+      }
+    }
+  }
+
   componentDidMount() {
     generalChatSocket.on('chat message', (msg, channel) => {
       const { messages } = this.state
 
       this.setState({
-        messages: {
-          ...messages,
-          [channel]: [
-            ...messages[channel],
-            msg,
-          ]
-        }
+        messages: this.appendMessages({ msg, channel, messages })
       })
     })
 
@@ -72,13 +87,7 @@ class Chat extends Component {
       const [name, isTyping] = whoIsTyping
 
       this.setState({
-        incoming: {
-          ...incoming,
-          [channel]: {
-            ...incoming[channel],
-            [name]: isTyping,
-          }
-        }
+        incoming: this.appendIncoming({ name, isTyping, channel, incoming })
       })
     })
   }
@@ -97,7 +106,7 @@ class Chat extends Component {
 
         const user = this.props.user
         const timestamp = moment().format('hh:mm')
-        const channel = this.state.activeKey
+        const { channel } = this.state
 
         generalChatSocket.emit('chat message', { user, message, timestamp }, channel)
 
@@ -116,7 +125,7 @@ class Chat extends Component {
 
     const name = this.getName()
     const isTyping = e.target.value ? true : false
-    const channel = this.state.activeKey
+    const { channel } = this.state
 
     generalChatSocket.emit('incoming chat message', [name, isTyping], channel)
   }
@@ -158,7 +167,7 @@ class Chat extends Component {
   }
 
   renderIncomingText() {
-    const channel = this.state.activeKey
+    const { channel } = this.state
 
     const whoIsTyping = Object.keys(this.state.incoming[channel])
       .filter((val, i) => this.state.incoming[channel][val])
@@ -174,19 +183,18 @@ class Chat extends Component {
     )
   }
 
-  onChannelChange = (activeKey) => {
-    this.setState({ activeKey })
-  }
+  onChannelChange = channel => this.setState({ channel })
 
   render() {
     const userList = this.props.userList || []
+    const { channel } = this.state
 
     return (
       <Layout className="layout" style={{ width: '100%', backgroundColor: "#fff" }}>
         {this.renderSider(userList)}
         <Tabs
           onChange={this.onChannelChange}
-          activeKey={this.state.activeKey}
+          activeKey={String(this.state.channel)}
           tabPosition="left"
           style={{ width: '100%' }}
         >
@@ -196,7 +204,7 @@ class Chat extends Component {
                 <Content style={{ padding: "10px" }}>
                   <ChatWindow messages={this.state.messages[pane.key]} />
                   {this.renderInputs()}
-                  {this.renderIncomingText()}
+                  <IncomingText incoming={this.state.incoming[channel]} />
                 </Content>
               </TabPane>
             )
