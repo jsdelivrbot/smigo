@@ -3,22 +3,24 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import moment from 'moment'
 
+import { userListRequest } from '../actions/index'
 import { getUserInfo, getUserList } from '../selectors/login_selector'
 
-import { userListRequest } from '../actions/index'
+import ChatWindow from './chat/ChatWindow'
 
-import { Row, Col, Input, Button, Card, Form, Layout, Icon, Alert } from 'antd'
+import { Row, Col, Input, Button, Form, Layout, Icon, Tabs } from 'antd'
 const FormItem = Form.Item
 const { Content, Sider } = Layout
+const TabPane = Tabs.TabPane
 
 // socket.io
 import io from 'socket.io-client'
-const url = `http://${window.location.hostname}:8081`
-const socket = io(url)
+const url = `http://${window.location.hostname}:8081/chat`
+const generalChatSocket = io(url)
 
-socket.on('error', console.error.bind(console))
+generalChatSocket.on('error', console.error.bind(console))
 
-socket.on('connect', () => {
+generalChatSocket.on('connect', () => {
   // console.log('connected to server')
 })
 
@@ -26,35 +28,45 @@ class Chat extends Component {
   constructor(props) {
     super(props)
 
+    const panes = [
+      { title: 'General chat', key: '1' },
+      { title: 'Tab 2', key: '2' },
+    ]
+
     this.state = {
-      messages: [],
-      incoming: {},
+      messages: { '1': [], '2': [] },
+      incoming: { '1': {}, '2': {} },
+      activeKey: panes[0].key,
+      panes,
     }
+
+    this.newTabIndex = 0
 
     this.props.userListRequest()
 
     this.getName = this.getName.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
-    this.renderChatMessages = this.renderChatMessages.bind(this)
-    this.renderChatWindow = this.renderChatWindow.bind(this)
     this.renderIncomingText = this.renderIncomingText.bind(this)
     this.renderInputs = this.renderInputs.bind(this)
     this.typingMessage = this.typingMessage.bind(this)
   }
 
   componentDidMount() {
-    socket.on('chat message', msg => {
+    generalChatSocket.on('chat message', (msg, channel) => {
       const { messages } = this.state
 
       this.setState({
-        messages: [
+        messages: {
           ...messages,
-          msg
-        ]
+          [channel]: [
+            ...messages[channel],
+            msg,
+          ]
+        }
       })
     })
 
-    socket.on('incoming chat message', whoIsTyping => {
+    generalChatSocket.on('incoming chat message', (whoIsTyping, channel) => {
       const { incoming } = this.state
 
       const [name, isTyping] = whoIsTyping
@@ -62,15 +74,18 @@ class Chat extends Component {
       this.setState({
         incoming: {
           ...incoming,
-          [name]: isTyping,
+          [channel]: {
+            ...incoming[channel],
+            [name]: isTyping,
+          }
         }
       })
     })
   }
 
   componentWillUnmount() {
-    socket.removeListener('chat message')
-    socket.removeListener('incoming chat message')
+    generalChatSocket.removeListener('chat message')
+    generalChatSocket.removeListener('incoming chat message')
   }
 
   handleSubmit(e) {
@@ -83,7 +98,7 @@ class Chat extends Component {
         const user = this.props.user
         const timestamp = moment().format('hh:mm')
 
-        socket.emit('chat message', { user, message, timestamp })
+        generalChatSocket.emit('chat message', { user, message, timestamp })
 
         this.props.form.setFieldsValue({ message: "" })
         this.typingMessage(e)
@@ -99,65 +114,20 @@ class Chat extends Component {
     e.preventDefault()
 
     const name = this.getName()
-
     const isTyping = e.target.value ? true : false
+    const channel = this.state.activeKey
 
-    socket.emit('incoming chat message', [name, isTyping])
+    generalChatSocket.emit('incoming chat message', [name, isTyping], channel)
   }
 
   renderSider(userList) {
     return (
-      <Sider width={200} style={{ background: '#fff' }}>
+      <Sider width={120} style={{ background: '#fff' }}>
         <div style={{ fontSize: "14px", fontWeight: "bold" }}>
           <Icon type="user" /> Logged users
         </div>
         {userList.map((user, i) => <div key={`user-${i}`}>{user.name}</div>)}
       </Sider>
-    )
-  }
-
-  renderChatWindow() {
-    return (
-      <Row>
-        <Col span={24}>
-          <Card
-            title="Chat"
-            style={{ height: "600px", marginBottom: "20px", overflowY: "scroll" }}>
-            {this.renderChatMessages()}
-          </Card>
-        </Col>
-      </Row>
-    )
-  }
-
-  renderChatMessages() {
-    return this.state.messages.map(this.renderChatMessage)
-  }
-
-  renderChatMessage(obj, i) {
-    if (obj.user && obj.user.name === 'Notification') {
-      return (
-        <Row key={`msg-${i}`} style={{ marginBottom: "5px" }}>
-          <Col span={24}>
-            <Alert message={obj.message} type="info" showIcon />
-          </Col>
-        </Row>
-      )
-    }
-
-    return (
-      <Row key={`msg-${i}`} style={{ marginBottom: "5px" }}>
-        <Col span={1} style={{ minWidth: "55px" }}>
-          {obj.timestamp}
-        </Col>
-        <Col span={2} style={{ minWidth: "80px" }}>
-          {obj.user === null ? "Anonymous" : obj.user.name}
-        </Col>
-        <Col span={21} style={{ width: "100%" }}>
-          {obj.message}
-          <hr style={{ marginTop: "10px", marginBottom: "10px" }} />
-        </Col>
-      </Row>
     )
   }
 
@@ -187,8 +157,10 @@ class Chat extends Component {
   }
 
   renderIncomingText() {
-    const whoIsTyping = Object.keys(this.state.incoming)
-      .filter((val, i) => this.state.incoming[val])
+    const channel = this.state.activeKey
+
+    const whoIsTyping = Object.keys(this.state.incoming[channel])
+      .filter((val, i) => this.state.incoming[channel][val])
 
     if (whoIsTyping.length === 0) return false
 
@@ -201,17 +173,34 @@ class Chat extends Component {
     )
   }
 
+  onChannelChange = (activeKey) => {
+    this.setState({ activeKey })
+  }
+
   render() {
     const userList = this.props.userList || []
 
     return (
-      <Layout className="layout" style={{ width: '100%' }}>
+      <Layout className="layout" style={{ width: '100%', backgroundColor: "#fff" }}>
         {this.renderSider(userList)}
-        <Content style={{ padding: "10px" }}>
-          {this.renderChatWindow()}
-          {this.renderInputs()}
-          {this.renderIncomingText()}
-        </Content>
+        <Tabs
+          onChange={this.onChannelChange}
+          activeKey={this.state.activeKey}
+          tabPosition="left"
+          style={{ width: '100%' }}
+        >
+          {this.state.panes.map(pane => {
+            return (
+              <TabPane tab={pane.title} key={pane.key}>
+                <Content style={{ padding: "10px" }}>
+                  <ChatWindow messages={this.state.messages[pane.key]} />
+                  {this.renderInputs()}
+                  {this.renderIncomingText()}
+                </Content>
+              </TabPane>
+            )
+          })}
+        </Tabs>
       </Layout>
     )
   }

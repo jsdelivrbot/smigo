@@ -32,18 +32,27 @@ app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, 'index.html'))
 })
 
-io.on('connection', (socket) => {
-  const timestamp = moment().format('hh:mm')
+// const chat = io
+//   .of('/chat')
+//   .on('connection', socket => {
+//     chat.emit('connection message')
+//     console.log('chat connection')
+//   })
 
-  io.emit('chat message', { user: { name: 'Notification' }, message: 'User connected', timestamp })
+const chat = io
+  .of('/chat')
+  .on('connection', socket => {
+    const timestamp = moment().format('hh:mm')
 
-  socket.on('chat message', msg => io.emit('chat message', msg))
-  socket.on('incoming chat message', name => io.emit('incoming chat message', name))
+    chat.emit('chat message', { user: { name: 'Notification' }, message: 'User connected', timestamp }, '1')
 
-  socket.on('disconnect', () => {
-    // console.log('user disconnected')
+    socket.on('chat message', (msg, channel) => chat.emit('chat message', msg, channel))
+    socket.on('incoming chat message', (name, channel) => chat.emit('incoming chat message', name, channel))
+
+    socket.on('disconnect', () => {
+      // console.log('user disconnected')
+    })
   })
-})
 
 server.listen(port)
 
