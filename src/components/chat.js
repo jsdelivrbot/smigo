@@ -17,11 +17,11 @@ const TabPane = Tabs.TabPane
 // socket.io
 import io from 'socket.io-client'
 const url = `http://${window.location.hostname}:8081/chat`
-const generalChatSocket = io(url)
+const chatSocket = io(url)
 
-generalChatSocket.on('error', console.error.bind(console))
+chatSocket.on('error', console.error.bind(console))
 
-generalChatSocket.on('connect', () => {
+chatSocket.on('connect', () => {
   // console.log('connected to server')
 })
 
@@ -73,7 +73,7 @@ class Chat extends Component {
   }
 
   componentDidMount() {
-    generalChatSocket.on('chat message', (msg, channel) => {
+    chatSocket.on('chat message', (msg, channel) => {
       const { messages } = this.state
 
       this.setState({
@@ -81,7 +81,7 @@ class Chat extends Component {
       })
     })
 
-    generalChatSocket.on('incoming chat message', (whoIsTyping, channel) => {
+    chatSocket.on('incoming chat message', (whoIsTyping, channel) => {
       const { incoming } = this.state
 
       const [name, isTyping] = whoIsTyping
@@ -93,8 +93,8 @@ class Chat extends Component {
   }
 
   componentWillUnmount() {
-    generalChatSocket.removeListener('chat message')
-    generalChatSocket.removeListener('incoming chat message')
+    chatSocket.removeListener('chat message')
+    chatSocket.removeListener('incoming chat message')
   }
 
   handleSubmit(e) {
@@ -108,7 +108,7 @@ class Chat extends Component {
         const timestamp = moment().format('hh:mm')
         const { channel } = this.state
 
-        generalChatSocket.emit('chat message', { user, message, timestamp }, channel)
+        chatSocket.emit('chat message', { user, message, timestamp }, channel)
 
         this.props.form.setFieldsValue({ message: "" })
         this.typingMessage(e)
@@ -127,7 +127,7 @@ class Chat extends Component {
     const isTyping = e.target.value ? true : false
     const { channel } = this.state
 
-    generalChatSocket.emit('incoming chat message', [name, isTyping], channel)
+    chatSocket.emit('incoming chat message', [name, isTyping], channel)
   }
 
   renderSider(userList) {
