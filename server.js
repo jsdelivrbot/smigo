@@ -48,6 +48,8 @@ const chat = io
 
     socket.on('chat message', (msg, channel) => chat.emit('chat message', msg, channel))
     socket.on('incoming chat message', (name, channel) => chat.emit('incoming chat message', name, channel))
+    socket.on('add channel', () => socket.broadcast.emit('add channel'))
+    socket.on('remove channel', targetKey => socket.broadcast.emit('remove channel', targetKey))
 
     socket.on('disconnect', () => {
       // console.log('user disconnected')

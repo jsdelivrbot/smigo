@@ -36,15 +36,15 @@ class Chat extends Component {
       { title: 'Room 3', key: 3, closable: true },
       { title: 'Room 4', key: 4, closable: true },
       { title: 'Room 5', key: 5, closable: true },
-      { title: 'Room 6', key: 6, closable: true },
-      { title: 'Room 7', key: 7, closable: true },
-      { title: 'Room 8', key: 8, closable: true },
-      { title: 'Room 9', key: 9, closable: true },
-      { title: 'Room 10', key: 10, closable: true },
-      { title: 'Room 11', key: 11, closable: true },
-      { title: 'Room 12', key: 12, closable: true },
-      { title: 'Room 13', key: 13, closable: true },
-      { title: 'Room 14', key: 14, closable: true },
+      // { title: 'Room 6', key: 6, closable: true },
+      // { title: 'Room 7', key: 7, closable: true },
+      // { title: 'Room 8', key: 8, closable: true },
+      // { title: 'Room 9', key: 9, closable: true },
+      // { title: 'Room 10', key: 10, closable: true },
+      // { title: 'Room 11', key: 11, closable: true },
+      // { title: 'Room 12', key: 12, closable: true },
+      // { title: 'Room 13', key: 13, closable: true },
+      // { title: 'Room 14', key: 14, closable: true },
     ]
 
     const messages = panes.reduce((prev, cur, i) => {
@@ -113,11 +113,21 @@ class Chat extends Component {
         incoming: this.appendIncoming({ name, isTyping, channel, incoming })
       })
     })
+
+    chatSocket.on('add channel', () => {
+      this.add()
+    })
+
+    chatSocket.on('remove channel', targetKey => {
+      this.remove(targetKey)
+    })
   }
 
   componentWillUnmount() {
     chatSocket.removeListener('chat message')
     chatSocket.removeListener('incoming chat message')
+    chatSocket.removeListener('add channel')
+    chatSocket.removeListener('remove channel')
   }
 
   handleSubmit = e => {
@@ -167,7 +177,18 @@ class Chat extends Component {
   handleChannelChange = channel => this.setState({ channel })
 
   handleEdit = (targetKey, action) => {
-    this[action](targetKey)
+    const channel = this[action](targetKey)
+
+    switch(action) {
+    case 'add':
+      chatSocket.emit('add channel')
+      break
+    case 'remove':
+      chatSocket.emit('remove channel', targetKey)
+      break
+    }
+
+    this.setState({ channel })
   }
 
   add = () => {
@@ -175,11 +196,15 @@ class Chat extends Component {
     const activeKey = 99 + this.newTabIndex
     this.newTabIndex++
 
-    panes.push({ title: `New Tab ${activeKey}`, key: activeKey })
+    const newPane = { title: `New Tab ${activeKey}`, key: activeKey }
+
+    panes.push(newPane)
     messages[activeKey] = []
     incoming[activeKey] = {}
 
-    this.setState({ panes, messages, incoming, channel: activeKey })
+    this.setState({ panes, messages, incoming, })
+
+    return activeKey
   }
 
   remove = targetKey => {
@@ -201,7 +226,9 @@ class Chat extends Component {
       channel = newPanes[lastIndex].key
     }
 
-    this.setState({ panes: newPanes, channel })
+    this.setState({ panes: newPanes })
+
+    return channel
   }
 
   render() {
