@@ -166,13 +166,23 @@ class Chat extends Component {
 
   handleChannelChange = channel => this.setState({ channel })
 
-  onEdit = (targetKey, action) => {
-    console.log('action', action)
-
-    if (action === 'remove') this[action](targetKey)
+  handleEdit = (targetKey, action) => {
+    this[action](targetKey)
   }
 
-  remove = (targetKey) => {
+  add = () => {
+    const { panes, messages, incoming } = this.state
+    const activeKey = 99
+    this.newTabIndex++
+
+    panes.push({ title: 'New Tab', key: activeKey })
+    messages[activeKey] = []
+    incoming[activeKey] = {}
+
+    this.setState({ panes, messages, incoming, channel: activeKey })
+  }
+
+  remove = targetKey => {
     let { channel, panes } = this.state
 
     let lastIndex
@@ -208,7 +218,7 @@ class Chat extends Component {
           type="editable-card"
           animated={false}
           style={{ width: '100%', marginLeft: "20px" }}
-          onEdit={this.onEdit}
+          onEdit={this.handleEdit}
         >
           {this.state.panes.map(pane => {
             return (
