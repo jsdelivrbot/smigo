@@ -14,20 +14,15 @@ const SGFParser = require('./src/utils/SGF_parser').SGFParser
 const scoreEstimator = require('./src/utils/scoreEstimator').scoreEstimator
 const generateToken = require('./src/utils/generateToken').generateToken
 
-const route_predict = (req, res) => {
-  const { board } = req.body
-
-  const promise = new Promise((resolve, reject) => {
-    const prediction = scoreEstimator(board)
+const predict = params => {
+  return new Promise((resolve, reject) => {
+    const prediction = scoreEstimator(params.board)
 
     if (!prediction) {
       reject('no prediction could be made')
     }
-    else {
-      resolve(prediction)
-    }
 
-    res.json({ prediction })
+    resolve({ prediction })
   })
 }
 
@@ -39,12 +34,12 @@ const route_upload = (req, res) => {
   })
 }
 
-const service_user = service({
+const userService = service({
   Model: User
 })
 
 module.exports = {
-  service_user,
-  predict: route_predict,
+  userService,
+  predict,
   upload: route_upload,
 }

@@ -3,6 +3,8 @@ import { connect } from 'react-redux'
 
 import { Button, Modal, Row, Col } from 'antd'
 
+import { predict } from '../api'
+
 import Board from './board/board'
 import { getBoardLayout } from '../selectors/board_selector'
 
@@ -18,17 +20,7 @@ class BoardPrediction extends Component {
   }
 
   handlePrediction() {
-    const url = `http://${window.location.hostname}:8081/api/predict`
-
-    fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-      body: JSON.stringify({ board: this.props.board })
-    })
-      .then(response => response.json())
+    predict(this.props.board)
       .then(response => {
         const { prediction } = response
 

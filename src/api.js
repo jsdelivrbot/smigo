@@ -9,5 +9,6 @@ export const getUser = (username, password) => app.service('/api/users').find({ 
 export const generateToken = id => app.service('/api/token').get(id)
 export const storeItem = (storageId, token) => localStorage.setItem(storageId, token)
 export const clearItem = storageId => localStorage.removeItem(storageId)
-export const saveToken = (id, token) => app.service(`/api/users`).patch(id, { token })
+export const saveToken = (id, token) => app.service('/api/users').patch(id, { token })
 export const getUsers = () => app.service('/api/users').find()
+export const predict = board => app.service('/api/predict').create({ board })

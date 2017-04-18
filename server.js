@@ -23,19 +23,22 @@ const io = require('socket.io')(server)
 
 const routes = require('./api_routes')
 
-app.post('/api/predict', routes.predict)
 app.post('/api/upload', routes.upload)
 
-app.use('/api/users', routes.service_user)
+app.use('/api/users', routes.userService)
+
+app.service('/api/predict', {
+  create: params => routes.predict(params)
+})
 
 app.service('/api/token', {
   get: (id, params) => Promise.resolve(generateToken({ id }))
 })
 
-app.service('/api/users').hooks({
+app.service('/api/predict').hooks({
   before: {
     find(hook) {
-      // console.log('hook before', hook)
+      console.log('hook before', hook)
     }
   },
   after: {
