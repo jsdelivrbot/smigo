@@ -28,11 +28,10 @@ function* login() {
 
 function* authorize(username, password) {
   try {
-    // const [user, id] = yield call(Api.authorize, username, password)
-    const authorizeResponse = yield call(Api.getUser, username, password)
-    const token = yield call(Api.generateToken, authorizeResponse[0]._id)
+    const userResponse = yield call(Api.getUser, username, password)
+    const token = yield call(Api.generateToken, userResponse[0]._id)
 
-    let user = authorizeResponse[0]
+    let user = userResponse[0]
     const id = user._id
 
     const { response, error } = yield call(Api.saveToken, id, token)
