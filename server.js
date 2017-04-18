@@ -6,8 +6,6 @@ const moment = require('moment')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 
-const generateToken = require('./src/utils/generateToken').generateToken
-
 const app = feathers()
   .configure(rest())
   .configure(hooks())
@@ -21,18 +19,18 @@ const io = require('socket.io')(server)
 
 // app.use(express.static(__dirname))
 
-const routes = require('./api_routes')
+const services = require('./api_services')
 
-app.post('/api/upload', routes.upload)
+app.post('/api/upload', services.upload)
 
-app.use('/api/users', routes.userService)
+app.use('/api/users', services.user)
 
 app.service('/api/predict', {
-  create: params => routes.predict(params)
+  create: params => services.predict(params)
 })
 
 app.service('/api/token', {
-  get: (id, params) => Promise.resolve(generateToken({ id }))
+  get: id => services.token(id)
 })
 
 app.service('/api/predict').hooks({
