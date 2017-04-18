@@ -1,3 +1,5 @@
+const service = require('feathers-mongoose')
+
 // setup mongo
 const mongoose = require('mongoose')
 mongoose.Promise = require('bluebird')
@@ -11,32 +13,6 @@ const handleUpload = require('./src/utils/handleUpload').handleUpload
 const SGFParser = require('./src/utils/SGF_parser').SGFParser
 const scoreEstimator = require('./src/utils/scoreEstimator').scoreEstimator
 const generateToken = require('./src/utils/generateToken').generateToken
-
-const route_login = (req, res) => {
-  const { username, password } = req.body
-
-  User.find({ username, password }, 'name', (error, collection) => {
-    if (error) {
-      res.json({ success: false, error, user: null, id: null })
-
-      return false
-    }
-
-    if (collection.length === 0) {
-      res.json({ success: false, error: false, user: null, id: null })
-
-      return false
-    }
-
-    const id = collection[0]._id
-    const token = generateToken({ id })
-    const name = collection[0].name
-
-    const user = { name, token }
-
-    res.json({ success: true, error: false, user, id })
-  })
-}
 
 const route_predict = (req, res) => {
   const { board } = req.body
@@ -63,37 +39,12 @@ const route_upload = (req, res) => {
   })
 }
 
-const route_saveToken = (req, res) => {
-  const {id, token } = req.body
-
-  User.where({ _id: id }).update({ token }, (error, writeOpResult) => {
-    if (error) {
-      res.json({ success: false, error })
-
-      return false
-    }
-
-    res.json({ success: true, error: false })
-  })
-}
-
-const route_users = (req, res) => {
-  User.find({ token: { $ne: "" }}, 'name token', (error, users) => {
-    if (error) {
-      res.json({ error, users: null })
-
-      return false
-    }
-
-    res.json({ error: null, users })
-  })
-
-}
+const service_user = service({
+  Model: User
+})
 
 module.exports = {
-  login: route_login,
+  service_user,
   predict: route_predict,
-  saveToken: route_saveToken,
   upload: route_upload,
-  users: route_users,
 }

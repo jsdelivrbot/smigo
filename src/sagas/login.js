@@ -28,9 +28,14 @@ function* login() {
 
 function* authorize(username, password) {
   try {
-    const [user, id] = yield call(Api.authorize, username, password)
+    // const [user, id] = yield call(Api.authorize, username, password)
+    const authorizeResponse = yield call(Api.getUser, username, password)
+    const token = yield call(Api.generateToken, authorizeResponse[0]._id)
 
-    const { response, error } = yield call(Api.saveToken, id, user.token)
+    let user = authorizeResponse[0]
+    const id = user._id
+
+    const { response, error } = yield call(Api.saveToken, id, token)
 
     if (error) {
       throw error
@@ -38,8 +43,9 @@ function* authorize(username, password) {
       return false
     }
 
-    yield fork(Api.storeItem, 'token', user.token)
+    user.token = token
 
+    yield fork(Api.storeItem, 'token', token)
     yield put(login_success(user))
 
     return id

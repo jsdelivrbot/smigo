@@ -1,32 +1,54 @@
-const express = require('express')
-const app = express()
+// const express = require('express')
+const feathers = require('feathers')
+const rest = require('feathers-rest')
+const hooks = require('feathers-hooks')
+const moment = require('moment')
+const bodyParser = require('body-parser')
+const cors = require('cors')
+
+const generateToken = require('./src/utils/generateToken').generateToken
+
+const app = feathers()
+  .configure(rest())
+  .configure(hooks())
+  .set('port', process.env.PORT || 8081)
+  .use(bodyParser.urlencoded({ extended: true }))
+  .use(bodyParser.json())
+  .use(cors())
 
 const server = require('http').createServer(app)
 const io = require('socket.io')(server)
 
-const moment = require('moment')
-
-const path = require('path')
-const port = process.env.PORT || 8081
-
-// use body-parser middleware
-const bodyParser = require('body-parser')
-app.use(bodyParser.urlencoded({ extended: true }))
-app.use(bodyParser.json())
-
-// use cors middleware
-const cors = require('cors')
-app.use(cors())
-
-app.use(express.static(__dirname))
+// app.use(express.static(__dirname))
 
 const routes = require('./api_routes')
 
-app.post('/api/login', routes.login)
 app.post('/api/predict', routes.predict)
 app.post('/api/upload', routes.upload)
-app.post('/api/save_token', routes.saveToken)
-app.get('/api/users', routes.users)
+
+app.use('/api/users', routes.service_user)
+
+app.service('/api/token', {
+  get: (id, params) => Promise.resolve(generateToken({ id }))
+})
+
+app.service('/api/users').hooks({
+  before: {
+    find(hook) {
+      // console.log('hook before', hook)
+    }
+  },
+  after: {
+    find(hook) {
+      // console.log('hook after', hook)
+
+      // const { _id: id, name } = hook.result[0]
+      // const token = generateToken({ id })
+
+      // const user = { name, token }
+    }
+  }
+})
 
 app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, 'index.html'))
@@ -56,6 +78,6 @@ const chat = io
     })
   })
 
-server.listen(port)
+server.listen(app.get('port'))
 
-console.log(`Server started. Listening to port ${port}.`)
+console.log(`Server started. Listening to port ${app.get('port')}.`)
