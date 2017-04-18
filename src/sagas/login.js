@@ -29,11 +29,11 @@ function* login() {
 function* authorize(username, password) {
   try {
     const userResponse = yield call(Api.getUser, username, password)
-    const token = yield call(Api.generateToken, userResponse[0]._id)
 
     let user = userResponse[0]
     const id = user._id
 
+    const token = yield call(Api.generateToken, id)
     const { response, error } = yield call(Api.saveToken, id, token)
 
     if (error) {
