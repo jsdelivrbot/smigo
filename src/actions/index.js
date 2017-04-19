@@ -14,10 +14,10 @@ import {
   UPDATE_TURN,
 } from './types'
 
-export function login_request(username, password) {
+export function login_request(email, password) {
   return {
     type: LOGIN_REQUEST,
-    payload: { username, password }
+    payload: { email, password }
   }
 }
 
