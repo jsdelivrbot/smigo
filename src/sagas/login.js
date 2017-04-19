@@ -7,10 +7,10 @@ import * as Api from '../api'
 function* login() {
   while (true) {
     const request = yield take(LOGIN_REQUEST)
-    const { username, password } = request.payload
+    const { email, password } = request.payload
 
     // fork return a Task object
-    const task = yield fork(authorize, username, password)
+    const task = yield fork(authorize, email, password)
 
     const action = yield take([LOGOUT, LOGIN_ERROR])
 
@@ -26,9 +26,9 @@ function* login() {
   }
 }
 
-function* authorize(username, password) {
+function* authorize(email, password) {
   try {
-    const userResponse = yield call(Api.getUser, username, password)
+    const userResponse = yield call(Api.getUser, email, password)
 
     let user = userResponse[0]
     const id = user._id

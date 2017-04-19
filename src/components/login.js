@@ -25,9 +25,9 @@ class Login extends Component {
     e.preventDefault()
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        const { username, password } = values
+        const { email, password } = values
 
-        this.props.login_request(username, password)
+        this.props.login_request(email, password)
       }
     })
   }
@@ -70,10 +70,10 @@ class Login extends Component {
         <Col span={8} offset={8}>
           <Form onSubmit={this.handleSubmit} className="login-form">
             <FormItem>
-              {getFieldDecorator('username', {
-                rules: [{ required: true, message: 'Please input your username!' }],
+              {getFieldDecorator('email', {
+                rules: [{ required: true, message: 'Please input your email!' }],
               })(
-                <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="Username" />
+                <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="E-mail" />
               )}
             </FormItem>
             <FormItem>

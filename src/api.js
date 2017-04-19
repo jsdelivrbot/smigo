@@ -7,7 +7,7 @@ const app = feathers()
 
 export const clearItem = storageId => localStorage.removeItem(storageId)
 export const generateToken = id => app.service('/api/token').get(id)
-export const getUser = (username, password) => app.service('/api/users').find({ username, password })
+export const getUser = (email, password) => app.service('/api/users').find({ email, password })
 export const getUsers = () => app.service('/api/users').find()
 export const predict = board => app.service('/api/predict').create({ board })
 export const saveToken = (id, token) => app.service('/api/users').patch(id, { token })
