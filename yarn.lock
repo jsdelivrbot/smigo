@@ -2093,7 +2093,7 @@ feathers-commons@^0.8.0, feathers-commons@^0.8.4, feathers-commons@^0.8.6, feath
   version "0.8.7"
   resolved "https://registry.yarnpkg.com/feathers-commons/-/feathers-commons-0.8.7.tgz#11c6f25b537745a983e8d61552d7db8932d53782"
 
-feathers-errors@^2.0.1:
+feathers-errors@^2.0.1, feathers-errors@^2.6.3:
   version "2.6.3"
   resolved "https://registry.yarnpkg.com/feathers-errors/-/feathers-errors-2.6.3.tgz#607f18df059b9aef7bc7cfddf0c90d6faec8d7ae"
   dependencies:
