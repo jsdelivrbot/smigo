@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { Redirect } from 'react-router-dom'
+import { Redirect, Link } from 'react-router-dom'
 
 import { Form, Icon, Input, Button, Checkbox, Row, Col, message, Alert } from 'antd'
 const FormItem = Form.Item
@@ -94,7 +94,7 @@ class Login extends Component {
               <Button type="primary" htmlType="submit" className="login-form-button">
                 Log in
               </Button>
-              Or <a>register now!</a>
+              Or <Link to="/register">register now!</Link>
             </FormItem>
           </Form>
         </Col>

@@ -21,7 +21,10 @@ function* login() {
     yield fork(Api.clearItem, 'token')
     // returned value in task.result()
     // remove token from db
-    yield call(Api.saveToken, task.result(), '')
+    if (task.result()) {
+      yield call(Api.saveToken, task.result(), '')
+    }
+
     yield put(userListRequest())
   }
 }

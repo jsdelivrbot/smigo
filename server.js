@@ -2,18 +2,19 @@
 const feathers = require('feathers')
 const rest = require('feathers-rest')
 const hooks = require('feathers-hooks')
+const errorHandler = require('feathers-errors/handler')
 const moment = require('moment')
 const bodyParser = require('body-parser')
 const cors = require('cors')
-const errorHandler = require('feathers-errors/handler')
+const path = require('path')
 
 const app = feathers()
   .configure(rest())
   .configure(hooks())
-  .set('port', process.env.PORT || 8081)
   .use(bodyParser.urlencoded({ extended: true }))
   .use(bodyParser.json())
-  .use(cors())
+  .use(cors()) // Since the auth plugin uses a few routes, the cors plugin will need to be used before auth.
+  .set('port', process.env.PORT || 8081)
   .use(errorHandler())
   // .use('/', feathers.static(__dirname + '/public'))
 
@@ -34,24 +35,6 @@ app.service('/api/predict', {
 
 app.service('/api/token', {
   get: id => services.token(id)
-})
-
-app.service('/api/predict').hooks({
-  before: {
-    find(hook) {
-      console.log('hook before', hook)
-    }
-  },
-  after: {
-    find(hook) {
-      // console.log('hook after', hook)
-
-      // const { _id: id, name } = hook.result[0]
-      // const token = generateToken({ id })
-
-      // const user = { name, token }
-    }
-  }
 })
 
 app.get('*', (req, res) => {

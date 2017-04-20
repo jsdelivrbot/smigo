@@ -15,7 +15,7 @@ const generateToken = require('./src/utils/generateToken').generateToken
 const UserModel = require('./src/models/user')
 
 const user = service({
-  Model: UserModel
+  Model: UserModel,
 })
 
 const predict = params => {

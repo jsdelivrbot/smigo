@@ -9,6 +9,7 @@ import Chat from './chat'
 import Game from './game'
 import Editor from './editor/editor'
 import LoginForm from './login'
+import RegisterationForm from './registeration_form'
 
 class App extends Component {
   constructor(props) {
@@ -26,6 +27,7 @@ class App extends Component {
               <Route path="/game" component={Game} />
               <Route path="/editor" component={Editor} />
               <Route path="/login" component={LoginForm} />
+              <Route path="/register" component={RegisterationForm} />
               <Route component={NoMatch} />
             </Switch>
           </div>

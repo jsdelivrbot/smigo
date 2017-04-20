@@ -2089,11 +2089,19 @@ fbjs@^0.8.7, fbjs@^0.8.9:
     setimmediate "^1.0.5"
     ua-parser-js "^0.7.9"
 
+feathers-authentication-client@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/feathers-authentication-client/-/feathers-authentication-client-0.3.1.tgz#65a0718aceccea1c9abfb65cb40a81f8cd13c95b"
+  dependencies:
+    debug "^2.2.0"
+    feathers-errors "^2.4.0"
+    jwt-decode "^2.1.0"
+
 feathers-commons@^0.8.0, feathers-commons@^0.8.4, feathers-commons@^0.8.6, feathers-commons@^0.8.7:
   version "0.8.7"
   resolved "https://registry.yarnpkg.com/feathers-commons/-/feathers-commons-0.8.7.tgz#11c6f25b537745a983e8d61552d7db8932d53782"
 
-feathers-errors@^2.0.1, feathers-errors@^2.6.3:
+feathers-errors@^2.0.1, feathers-errors@^2.4.0, feathers-errors@^2.6.3:
   version "2.6.3"
   resolved "https://registry.yarnpkg.com/feathers-errors/-/feathers-errors-2.6.3.tgz#607f18df059b9aef7bc7cfddf0c90d6faec8d7ae"
   dependencies:
@@ -2892,6 +2900,10 @@ jws@^3.1.4:
     base64url "^2.0.0"
     jwa "^1.1.4"
     safe-buffer "^5.0.1"
+
+jwt-decode@^2.1.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/jwt-decode/-/jwt-decode-2.2.0.tgz#7d86bd56679f58ce6a84704a657dd392bba81a79"
 
 kareem@1.2.1:
   version "1.2.1"
